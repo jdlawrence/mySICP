@@ -32,3 +32,5 @@
 ; are evaluated with applicative-order evaluation. This means that all procedures
 ; must be broken down (evaluated) until we get to PRIMITIVE OPERATORS (+, -, *, /, 1, 2, 3, etc)
 ; Since sqrt-iter is recursive, it will never get down to primitive operators
+; Check out https://gist.github.com/jolisper/3688628
+
