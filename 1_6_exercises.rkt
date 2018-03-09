@@ -3,7 +3,7 @@
   (/ (+ x y) 2))
 
 
-;(average 2 3)
+(average 2 3)
 
 (define (new-if predicate then-clause else-clause)
   (cond (predicate then-clause)
