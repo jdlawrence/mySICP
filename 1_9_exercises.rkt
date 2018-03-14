@@ -9,25 +9,24 @@
 
 #|
 (+ 4 5)
-  (if (= 4 0)
-    (inc (+ 4 4))
-      (if (= 4 0)
-        (inc (+ 3 4))
-          (if (= 3 0)
-            (inc (+ 2 4))
-              (if (= 2 0))
-                (inc (+ 1 4))
-                  (if (= 1 0))
-                    (inc (+ 0 4))
-                      (if (= 0 0))
-                        4)
-                    (inc 4)
-                (inc 5)
-            (inc 6)
-         (inc 7)
-     (inc 8)
-(9) 
+(inc (+ (dec 4) 5)
+(inc (+ 3 5))
+(inc (inc (+ (dec 3) 5)))
+(inc (inc (+ 2 5)))
+(inc (inc (inc (+ (dec 2) 5)))))
+(inc (inc (inc (+ 1 5)))))
+(inc (inc (inc (inc (+ (dec 0) 5))))))
+(inc (inc (inc (inc (+ 0 5)))))
+(inc (inc (inc (inc 5))))
+(inc (inc (inc 6)))
+(inc (inc 7))
+(inc 8)
+9
+
+This is recursive
+
 |#
+
 
 (define (+ a b)
   (if (= a 0)
@@ -35,20 +34,17 @@
       (+ (dec a) (inc b))))
 #|
 (+ 4 5)
-  (if (= 4 0) #f
-    (+ 3 6)
-      (if (= 3 0)
-        (+ 2 7)
-          (if (= 2 0)
-            (+ 1 8)
-              (if (= 1 0)
-                (+ 0 9)
-                  (if (= 0 0)
-                    (9)
-                (9)
-            (9)
-       (9)
-    (9)
+(+ (dec 4) (inc 5))
+(+ 3 6)
+(+ (dec 3) (inc 4))
+(+ 2 7)
+(+ (dec 2) (inc 7))
+(+ 1 8)
+(+ (dec 1) (inc 8))
+(+ 0 9)
+9
+
+This is iterative
 |#
 
 (+ 4 5)
