@@ -1,49 +1,60 @@
 #lang sicp
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
 #|
-To figure out p' and q':
-We can use a or b, but b is simpler.
+NOTE: I'm using 'r' instead of 'remainder' for brevity.
 
-b <- bp + aq
+In normal order:
 
-Plug in the expressions for a and b into the expression
-for the next b:
-Since a = bq + aq + ap and b = bp + aq,
-b <- (bp + aq)p + (bq + aq + ap)q
+Remember in normal order, you always keep expanding the procedure until you have only primitives
+operands.
 
-Simplification:
-bpp + apq + bqq  + aqq + apq
+(gcd 206 40):
+(if (= 40 0)
+  206
+  (gcd 40 (r 206 40)))
 
-Combine like terms:
-bpp + bqq + 2apq + aqq
+(gcd 40 (r 206 40))
+(if (= (r 206 40) 0) ; (r 206 40) evaluates to 6. R1
+    40
+    (gcd (r 206 40) (r 40 (r 206 40))))
 
-Factor out a and b:
-b(pp + qq) + a(2pq + qq)
-b(p^2 + q^2) + a(2pq + q^2)
+(gcd (r 206 40) (r 40 (r 206 40))):
+(if (= (r 40 (r 206 40)) 0) ; (r 40 (r 206 40)) is evaluated to 4. R2 & R3.
+    (r 206 40)
+    (gcd (r 40 (r 206 40)) (r (r 206 40) (r 40 (r 206 40)))))
 
-This means:
-p' = p^2 + q^2
-q' = 2pq + q^2
+(gcd (r 40 (r 206 40)) (r (r 206 40) (r 40 (r 206 40)))):
+(if (= (r (r 206 40) (r 40 (r 206 40))) 0) ; (r (r 206 40) (r 40 (r 206 40))) evaluates to 2. R4 to R7. 
+    (r 40 (r 206 40))
+    (gcd (r (r 206 40) (r 40 (r 206 40))) (r (r 40 (r 206 40)) (r (r 206 40) (r 40 (r 206 40))))))
+
+(gcd (r (r 206 40) (r 40 (r 206 40))) (r (r 40 (r 206 40)) (r (r 206 40) (r 40 (r 206 40))))):
+(if (= (r (r 40 (r 206 40)) (r (r 206 40) (r 40 (r 206 40)))) 0) ;
+#|
+(r (r 40 (r 206 40)) (r (r 206 40) (r 40 (r 206 40))) evaluates to 0. R8 to R14
 |#
-(define (square x) (* x x))
-(define (fib n)
-  (fib-iter 1 0 0 1 n))
+   (r (r 206 40) (r 40 (r 206 40)))
+   (gcd (r (r 40 (r 206 40)) (r (r 206 40) (r 40 (r 206 40)))) (r (r (r 206 40) (r 40 (r 206 40))) (r (r 40 (r 206 40)) (r (r 206 40) (r 40 (r 206 40)))))))
 
-(define (fib-iter a b p q count)
-  (cond ((= count 0) b)
-        ((even? count)
-         (fib-iter a
-                   b
-                   (+ (square p) (square q))     ; compute p'
-                   (+ (* 2 p q) (square q))      ; compute q'
-                   (/ count 2)))
-        (else (fib-iter (+ (* b q) (* a q) (* a p))
-                        (+ (* b p) (* a q))
-                        p
-                        q
-                        (- count 1)))))
+;The if statement is finally true, so we just need evaluate (r (r 206 40) (r 40 (r 206 40)))
+(r (r 206 40) (r 40 (r 206 40))) ; This calls r 4 more times.  R15 to R18
+(2)
 
-(fib 0)
-(fib 1)
-(fib 2)
-(fib 6)
-(fib 7)
+R is called 18 times!
+|#
+
+#|
+
+In applicative order:
+GCD(206, 40): 206%40 = 6
+GCD(40, 6): 40%6 = 4
+GCD(6, 4): 6%4 = 2
+GCD(4, 2): 4%2 = 0;
+GCD(2, 0) => 2 is the GCD
+
+There are 4 remainder operations performed.
+|#
+
