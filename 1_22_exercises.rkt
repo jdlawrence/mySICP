@@ -52,5 +52,14 @@
   (display " *** ")
   (display elapsed-time))
 
-(prime? 19)
-(timed-prime-test 131)
+;(prime? 19)
+;(timed-prime-test 131)
+
+(define (search-for-primes current end)
+  ;(display current)
+  ;(display "\n")
+  (timed-prime-test current)
+  (if (< current end)
+      (search-for-primes (+ current 2) end)))
+
+(search-for-primes 100000001 100001000)
