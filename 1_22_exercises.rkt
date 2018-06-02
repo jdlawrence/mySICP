@@ -64,4 +64,15 @@
   (if (< current end)
       (search-for-primes (+ current 2) end)))
 
-(search-for-primes 10000000001 10000010500)
+(search-for-primes 999999 1000100)
+
+#|
+Larger than 1000: 1009(2ms), 1013 (2ms), 1019 (3ms)
+Larger than 10000: 10061(7ms), 10067(7ms), 10069(8ms)
+Larger than 100000: 100003(24ms), 100019(24ms), 100043(23ms)
+Larger than 1,000,000: 1000003(72ms), 100033(71ms), 1000037(71ms)
+
+Every time we increase by a magnitude of 10, the times increase by
+sqrt(10) ~= 3.162
+
+|#
