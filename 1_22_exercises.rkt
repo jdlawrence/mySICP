@@ -39,18 +39,20 @@
   (= n (smallest-divisor n)))
 
 (define (timed-prime-test n)
-  (newline)
-  (display n)
+  ;(newline)
+  ;(display n)
   (start-prime-test n (runtime)))
 
 (define (start-prime-test n start-time)
   (if (prime? n)
-      (report-prime (- (runtime) start-time))
+      (report-prime (- (runtime) start-time) n)
       #f))
 
-(define (report-prime elapsed-time)
+(define (report-prime elapsed-time prime)
+  (display prime)
   (display " *** ")
-  (display elapsed-time))
+  (display elapsed-time)
+  (newline))
 
 ;(prime? 19)
 ;(timed-prime-test 131)
@@ -62,4 +64,4 @@
   (if (< current end)
       (search-for-primes (+ current 2) end)))
 
-(search-for-primes 100000001 100001000)
+(search-for-primes 10000000001 10000010500)
