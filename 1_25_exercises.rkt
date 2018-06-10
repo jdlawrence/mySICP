@@ -71,6 +71,15 @@
   (display elapsed-time)
   (newline))
 
-;(prime? 19)
 (timed-prime-test 1319)
+
+#|
+Alyssa P Hacker's implementation of expmod only calls remainder at the very end of the procedure.
+According to the footnote 46, remainder has some optimizations that allow us to use it without
+finding the product of very large numbers. We do not have use numbers larger than m.
+Without these optimizations, we have will have to deal with numbers much larger than m, and this
+make Alyssa's version much slower
+|#
+
+
 
