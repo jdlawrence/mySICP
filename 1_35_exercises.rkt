@@ -19,7 +19,7 @@
 ;((lambda (x) (+ x (/ 1 x))) 3)
 
 (define (golden-ratio a)
-  ((lambda (x) (+ x (/ 1.0 x)))
+  ((lambda (x) (+ 1 (/ 1.0 x)))
   a))
 ;(golden-ratio 3)
 
