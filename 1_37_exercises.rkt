@@ -4,10 +4,10 @@
 ; You can think of this an outside-in method
 (define (cont-frac-r n d k)
   (define (sub i)
-    (if (= i k)
+    (if (> i k)
         0
         (/ (n i) (+ (d i) (sub (+ i 1))))))
-  (sub 0))
+  (sub 1))
 
 ; Iterative version of continuous fraction
 ; NOTE: the golden ratio, phi, appears to be the ratio
