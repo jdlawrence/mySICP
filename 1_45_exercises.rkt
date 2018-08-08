@@ -50,20 +50,24 @@
 ;(define (nth-power base exp)
 ;  ((repeated (lambda (x) (* base x)) exp) base))
 
-(define (nth-power n)
-  (define (sub iter result)
-    (if (= iter 0)
-        result
-        (sub (- iter 1) (* n result))))
+(define (nTimes n x)
+  (define (sub i result)
+    (if (= i 0)
+       result
+       (sub (- i 1) (* x result))))
   (sub n 1))
 
-(nth-power 5)
+;(nTimes 3 5)
 
-(define (nth-root x n)
-;               ((repeated average-damp 3) (lambda (y) (/ x (* y y y y)   )))
-  (fixed-point ((repeated average-damp (- n 2)) (lambda (y) (/ x (* y y y)      ))) 
+; The number of average-damps turns out to be floor( log base2 of n)
+(define (floor-log2 x) (floor (/ (log x) (log 2))))
+
+(define (root n x)
+  (fixed-point ((repeated average-damp (floor-log2 n)) (lambda (y) (/ x (nTimes (- n 1) y)))) 
                1.0))
   
 (fourth-root 16)
-(nth-root 16 4)
+(root 4 256)
 (fifth-root 32)
+(root 32 4294967296)
+(root 32 4294967296)
