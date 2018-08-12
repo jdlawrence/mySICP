@@ -11,13 +11,25 @@
 (define (good-enough? guess x)
  (< (abs (- (square guess) x)) 0.001))
 
+
 (define (iterative-improve good-enough improve)
-  (lambda (x)
+  (lambda (guess)
     (define (sub guess)
       (if (good-enough guess)
           guess
           (sub (improve guess))))
-    (sub x)))
+    (sub guess)))
+
+#|
+Version that uses an alternative form of a lambda (anonymous) function
+
+(define (iterative-improve good-enough improve)
+  (define (sub guess)
+    (if (good-enough guess)
+      guess
+        (sub (improve guess))))
+    sub)
+|#
 
 (define (sqrt x)
   ((iterative-improve
@@ -26,17 +38,18 @@
     (lambda (guess)
       (average guess (/ x guess))))
    1.0))
-  
+    
 (sqrt 20.0)
 
 (define (close-enough? x y)
  (< (abs (- x y)) 0.001))
 
-(define (fixed-point f guess)
+(define (fixed-point f val1)
   ((iterative-improve
-   (lambda (guess)
-     (< (abs (- (f guess) guess)) 0.001))
-   (lambda (guess)
-     (f guess)))
-   (f guess)))
+    (lambda (guess)
+      (< (abs (- guess (f guess))) .0001))
+    (lambda (guess)
+      (f guess)))
+   val1))
+    
 (fixed-point cos 1.0)
