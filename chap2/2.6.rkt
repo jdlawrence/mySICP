@@ -4,15 +4,31 @@
 (define (add-1 n)
  (lambda (f) (lambda (x) (f ((n f) x) ))))
 
-; A function f applied once to our function
-(define one (lambda (f) (f (lambda (x) x))))
-(define two (lambda (f) (f (f (lambda (x) x)))))
+(define xVal 0)
 
-(define (cool x) (+ x 2))
-((zero cool) 2)
+(define (fEx x) (+ x 2))
 
-(let ((jamil 34)
-     (akeem 32))
-  (+ jamil akeem))
+((zero fEx) xVal) ;returns 0
 
-((lambda (x) (+ 1 x)) 4)
+(((add-1 zero) fEx) xVal) ; return 2
+
+(add-1 zero)
+(lambda (f) (lambda (x) (f ((zero f) x) )))
+(lambda (f) (lambda (x) (f x) ))
+(f x)
+
+(add-1 one)
+(lambda (f) (lambda (x) (f ((one f) x) )))
+(lambda (f) (lambda (x) (f (f x)) ))
+(f (f x))
+
+#|
+one is (f x)
+two is (f (f x))
+
++, meaning addition, is f (m + n) number of times
+For ex, if m is three, and n is four, three + four is
+(f (f (f (f (f (f (f x)))))))
+|#
+
+
