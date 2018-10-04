@@ -20,25 +20,22 @@
     (make-interval (min p1 p2 p3 p4)
                    (max p1 p2 p3 p4))))
 
+
+#| NOTE: if the intervals spans 0, like (make-interval -2 2),
+the reciprocal of the interval will be (make-interval 1/2 -1/2).
+This has a higher lower bound than upper bound and doesn't
+make sense
+|#
+
 (define (div-interval x y)
-  (if (or (= (upper-bound y) 0) (= (lower-bound y)))
-      "Error Divide by 0"
+  (if (<= (* (upper-bound y) (lower-bound y)) 0) 
+      (error "Error: Divide by 0")
   (mul-interval x
                 (make-interval (/ 1.0 (upper-bound y))
                                (/ 1.0 (lower-bound y))))))
 
-(define i1 (make-interval 3 7))
-(define i2 (make-interval -1 1))
 (define i3 (make-interval 0 10))
 (define i4 (make-interval -2 0))
 
-(define (width interval)
-  (/ (- (upper-bound interval)
-        (lower-bound interval)) 2))
-
-(mul-interval i3 i4)
-(div-interval i3 i4)
 #| Testing |#
-(width (mul-interval i1 i2))
-(width (mul-interval i3 i4))
-#| Above widths are the same |#
+(div-interval i3 i4) ; Produce "Error: Divide by 0 
