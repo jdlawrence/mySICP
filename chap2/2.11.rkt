@@ -14,6 +14,7 @@
                    (max p1 p2 p3 p4))))
 |#
 
+#| Answer |#
 (define (mul-interval x y)
     (let (
           (a (lower-bound x))
