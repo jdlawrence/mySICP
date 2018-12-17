@@ -69,3 +69,8 @@ together, and one sum, which averages the intervals. In par2, there is only
 one sum.
 
 |#
+
+(define j (make-interval 99 101))
+(define k (make-interval 1 1))
+(div-interval j j)
+(mul-interval j k)
