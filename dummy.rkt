@@ -36,3 +36,10 @@
 (reverse (list 1 2 3))
 
 (cons 1 3)
+
+(define (print-star x)
+  (newline)
+  (display "* ")
+  (display x))
+
+(print-star 3)
