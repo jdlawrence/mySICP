@@ -48,7 +48,7 @@ by either reversing the given list, or reversing the answer.
 Second Approach:
 When you try to switch the arguements to cons, putting the answer first and then the squared value,
 you pass cons a list as the first argument, which Racket stores as a value. This creates a nested
-list as the first argument and then a plain value as the second argument. "Cons" needs a value as its
+list as the first argument and then a plain integer as the second argument. "Cons" needs a value as its
 first argument and a list or empty list as its second argument. To make this work correctly, we can
 use "append". "Append" expects two lists as its arguments, so we must surround "(square (car things))"
 with a list:
