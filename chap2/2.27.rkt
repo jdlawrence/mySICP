@@ -2,6 +2,7 @@
 (define x (list (list 1 2) (list 3 4)))
 (define easier (list (list 1 2) 3))
 (define j (list 2 4 8 16))
+(define y (list (list 1 2) (list (list 3 4) (list 5 6 7))))
 
 (define (deep-reverse items)
   (cond ((null? items) items)
@@ -17,4 +18,4 @@
   (sub items 0))
 |#
 (reverse x)
-(deep-reverse x)
+(deep-reverse y)
