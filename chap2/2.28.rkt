@@ -7,4 +7,14 @@
         (else (+ (count-leaves (car x))
                  (count-leaves (cdr x))))))
 
-(define (fringe
+(define (fringe aList)
+  (define (sub items result)
+    (cond ((null? items) result)
+          ((not (pair? items)) (append result (list items)))
+          (else (append (sub (car items) result) (sub (cdr items) result)))))
+  (sub aList '()))
+
+(define test1 (list 1 2 3 4))
+
+(fringe test1)
+(fringe x)
