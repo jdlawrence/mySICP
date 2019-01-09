@@ -25,11 +25,18 @@
   (+ (weight-sub (left-branch mobile))
      (weight-sub (right-branch mobile))))
 
-(define branch1 (make-branch 3 5))
+(define (balanced? mobile)
+  (define (torque branch)
+    (if (pair? (branch-structure branch))
+        (* (branch-length branch) (total-weight (branch-structure branch)))
+        (* (branch-length branch) (branch-structure branch))))
+  (= (torque (left-branch mobile)) (torque (right-branch mobile))))
 
-(define branch2 (make-branch 4 7))
+(define branch1 (make-branch 3 8))
 
-(define branch3 (make-branch 6 branch2))
+(define branch2 (make-branch 4 6))
+
+(define branch3 (make-branch 6 (make-mobile (make-branch 2 11) (make-branch 7 13))))
 
 (define mobile1 (make-mobile branch1 branch2))
 
@@ -42,5 +49,7 @@
 ;(pair? (branch-structure (make-branch 3 (make-mobile (make-branch 2 11) (make-branch 7 13)))))
 (right-branch mobile1)
 (total-weight mobile1)
+
 (total-weight mobile2)
+(balanced? mobile1)
 ;mobile2
