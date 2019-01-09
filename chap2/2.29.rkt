@@ -9,46 +9,38 @@
   (car mobile))
 
 (define (right-branch mobile)
-  (cdr mobile))
+  (car (cdr mobile)))
 
 (define (branch-length branch)
   (car branch))
 
 (define (branch-structure branch)
-  (cdr branch))
+  (car (cdr branch)))
 
 (define (total-weight mobile)
-  (define (sub items result)
-    (cond ((null? items) result)
-          ((not (pair? (left-branch items))) (+ result ) )
-          (else (append (sub (car items) result) (sub (cdr items) result)))))
-  (sub mobile '())) 
-
-(define x (list (list 1 2) (list 3 4)))
-
-(define (count-leaves x)
-  (cond ((null? x) 0)
-        ((not (pair? x)) 1)
-        (else (+ (count-leaves (car x))
-                 (count-leaves (cdr x))))))
-
-(define (fringe aList)
-  (define (sub items result)
-    (cond ((null? items) result)
-          ((not (pair? items)) (append result (list items)))
-          (else (append (sub (car items) result) (sub (cdr items) result)))))
-  (sub aList '()))
-
-(define test1 (list 1 2 3 4))
-
-(fringe test1)
-(fringe x)
+  (define (weight-sub aBranch)
+    (if (pair? (branch-structure aBranch))
+        (total-weight (branch-structure aBranch))
+        (branch-structure aBranch)))
+  (+ (weight-sub (left-branch mobile))
+     (weight-sub (right-branch mobile))))
 
 (define branch1 (make-branch 3 5))
 
 (define branch2 (make-branch 4 7))
 
+(define branch3 (make-branch 6 branch2))
+
 (define mobile1 (make-mobile branch1 branch2))
 
-mobile1
-  
+(define mobile2 (make-mobile branch1 branch3))
+
+
+;mobile1
+;(branch-length (make-branch 3 5))
+;(pair? (branch-structure (make-branch 3 5)))
+;(pair? (branch-structure (make-branch 3 (make-mobile (make-branch 2 11) (make-branch 7 13)))))
+(right-branch mobile1)
+(total-weight mobile1)
+(total-weight mobile2)
+;mobile2
