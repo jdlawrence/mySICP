@@ -5,6 +5,7 @@
 (define (make-branch length structure)
   (list length structure))
 
+#| Part a |#
 (define (left-branch mobile)
   (car mobile))
 
@@ -17,6 +18,7 @@
 (define (branch-structure branch)
   (car (cdr branch)))
 
+#| Part b |#
 (define (total-weight mobile)
   (define (weight-sub aBranch)
     (if (pair? (branch-structure aBranch))
@@ -25,6 +27,7 @@
   (+ (weight-sub (left-branch mobile))
      (weight-sub (right-branch mobile))))
 
+#| Part c |#
 (define (torque branch)
     (if (pair? (branch-structure branch))
         (* (branch-length branch) (total-weight (branch-structure branch)))
@@ -40,6 +43,21 @@
            #t)
        ))
 
+#| Part d
+Suppose we change the representation of mobiles so that the constructors are
+(define (make-mobile left right)
+ (cons left right))
+(define (make-branch length structure)
+ (cons length structure))
+How much do you need to change your programs to convert to the new representation?
+
+To make this work, we would need something that can distinguish between a single number
+and another cons, sort of like pair? does with list. Since that either isn't doesn't
+exist or hasn't been taught to us yet, we cannot complete this exercise with the cons
+structure.
+|#
+#
+#| Testing |#
 (define branch1 (make-branch 3 8))
 
 ;(define branch2 (make-branch 4 6))
