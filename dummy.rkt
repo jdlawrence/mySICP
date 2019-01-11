@@ -28,15 +28,14 @@
 (define branch1 (make-branch 1 2))
 (define branch2 (make-branch 3 4))
 (define mobile1 (make-mobile branch1 branch2))
-(define mobile3 (make-mobile branch1 (make-mobile (make-branch 5 6) (make-branch 7 8))))
-mobile1
+(define mobile3 (make-mobile branch1 (make-branch 3 (make-mobile (make-branch 5 6) (make-branch 7 8)))))
+;mobile1
 ;mobile3
-(left-branch mobile1)
-(cdr (cdr mobile1))
-(cdr (cdr branch1))
+;(left-branch mobile1)
+;(pair? (branch-structure mobile3))
 ;(left-branch mobile3)
 ;(right-branch mobile1)
 ;(right-branch mobile3)
 
-;(total-weight branch1)
+(total-weight mobile3)
 

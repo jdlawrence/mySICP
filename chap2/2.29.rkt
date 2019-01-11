@@ -51,12 +51,23 @@ Suppose we change the representation of mobiles so that the constructors are
  (cons length structure))
 How much do you need to change your programs to convert to the new representation?
 
-To make this work, we would need something that can distinguish between a single number
-and another cons, sort of like pair? does with list. Since that either isn't doesn't
-exist or hasn't been taught to us yet, we cannot complete this exercise with the cons
-structure.
+To make this work, the only thing we need to change is the way we access the right
+branch and the branch structure. Those two are:
+
+(define (right-branch mobile)
+  (cdr mobile))
+(define (branch-structure branch)
+  (cdr branch))
+
+This is actually a little simpler because we don't need to "car" or extract the single
+list item out of the list.
+
+This one little change allows us to leave the rest of the logic the same. It shows the
+power of abstractions. The user of "total-weight" and "torque" doesn't need to know
+what the underlying implementation of a mobile and branch are. The architect can decide
+on a list or cons or whatever to represent the mobile and branch.
 |#
-#
+
 #| Testing |#
 (define branch1 (make-branch 3 8))
 
@@ -78,8 +89,8 @@ structure.
 ;(right-branch mobile1)
 ;(total-weight mobile1)
 
-;(total-weight mobile2)
+(total-weight mobile2) ;20
 ;(torque branch3)
-(torque branch4)
-(balanced? mobile2)
+(torque branch4) ;24
+(balanced? mobile2) ; #t
 ;mobile2
