@@ -1,61 +1,34 @@
 #lang racket
 (define nil '())
 
-#| For practice |#
-(define (fib n)
-  (define (fib-iter a b count)
-    (if (= count 0)
-        b
-        (fib-iter b (+ a b) (- count 1))))
-  (cond ((= n 0) 0)
-        ((= n 1) 1)
-        (else (fib-iter 0 1 n)))) 
+(define (j item) item)
 
-(fib 7)
+(define (subsets s)
+  (if (null? s)
+      (list nil)
+      (let ((rest (subsets (cdr s))))
+        (append rest (map (lambda (items) (cons (car s) items)) rest)))))
 
-(define (even-fibs n)
-  (define (next k)
-    (if (> k n)
-        '()
-        (let ((f (fib k)))
-          (if (even? f)
-              (cons f (next (+ k 1)))
-              (next (+ k 1))))))
-  (next 0))
+(subsets (list 1 2))
 
-(even-fibs 30)
+(define (f x)
+  ((lambda (a) (* a a))
+   x))
 
-(define (accumulate op initial sequence)
-  (if (null? sequence)
-      initial
-      (op (car sequence) (accumulate op initial (cdr sequence)))))
+#| Answer
+This works by concatenating the existing powerset with each item. For example, if the subset is
+(empty, 1, 2, 12), and the item is 3, the concatenation is (empty- 3 (just 3), 13, 23, 123)
 
-(define (enumerate-interval low high)
-  (if (> low high)
-      nil
-      (cons low (enumerate-interval (+ low 1) high))))
+Putting these together gives
+(empty, 1, 2, 12, 3, 13, 23, 123)
 
-(define (even-fibs2 n)
-  (accumulate cons
-              '()
-              (filter even?
-                      (map fib
-                           (enumerate-interval 0 n)))))
-(even-fibs2 30)
+Assuming the set is (1, 2, 3, 4), the next step would be to concat the existing set with a concatenation
+ of 4 and the existing set.
+|#
 
-(define (map2 p sequence)
-  (accumulate (lambda (x y) (p x)) nil sequence))
+(define (map-square items)
+  (map f items))
 
-(define (square x) (* x x))
-
-(map2 square (enumerate-interval 0 5))
-
-(define (mapJ transducer aList)
-  (if (null? aList)
-      '()
-      (cons (transducer (car aList)) (map transducer (cdr aList)))))
+#| Testing |#
+(map-square (list 1 2 3 45))
   
-(mapJ (lambda (x) (* x 2)) (list 1 2 3 4))
-
-
-

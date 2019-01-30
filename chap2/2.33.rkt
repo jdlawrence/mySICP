@@ -1,24 +1,8 @@
 #lang racket
-(define nil '())
+(define (accumulate op initial sequence)
+   (if (null? sequence)
+       initial
+       (op (car sequence)
+           (accumulate op initial (cdr sequence)))))
 
-(define (j item) item)
-
-(define (subsets s)
-  (if (null? s)
-      (list nil)
-      (let ((rest (subsets (cdr s))))
-        (append rest (map (lambda (items) (cons (car s) items)) rest)))))
-
-(subsets (list 1 2 3))
-
-(define (f x)
-  ((lambda (a) (* a a))
-   x))
-
-;(f 1.3)
-
-(define (map-square items)
-  (map f items))
-
-;(map-square (list 1 2 3 45))
-  
+(accumulate + 0 (list 1 2 3 4 5))
