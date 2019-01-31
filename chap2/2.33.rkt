@@ -19,14 +19,24 @@
       '()
       (cons low (enumerate-interval (+ low 1) high))))
 
+#| p is your transformer function, like square or double |#
 (define (map-my-version p sequence)
   (accumulate (lambda (x y) (cons (p x) y)) '() sequence))
 
-(map-my-version (lambda (x) (* x x)) (list 1 2 3 4 5))
+#| Since we are using con, which appends to the front of a list,
+we start with seq2 and gradually tack on values from seq1, starting
+with the last value and moving from right to left|#
+(define (append-my-version seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+(define (add-one-to-y x y) (+ y 1))
+(define (length-my-version sequence)
+  (accumulate add-one-to-y 0 sequence))
 
 #| Testing |#
+(map-my-version (lambda (x) (* x x)) (list 1 2 3 4 5))
+(append-my-version (list 1 2 3) (list 4 5 6))
+(length-my-version (list 1 2 3 4)) 
 (accumulate + 0 (list 1 2 3 4 5))
-(map fib (enumerate-interval 0 6))
-(fib 1)          
-(fib 2)          
-(fib 3)          
+(map fib (enumerate-interval 0 16))
+(fib 13)          
