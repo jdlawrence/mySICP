@@ -22,7 +22,9 @@
 #| Testing |#
 (define ex1 (list (list 1 2) 3 4))
 (define ex2 (list 3 4 5 (list 6 (list 7 8) 9)))
+(define ex3 (list (list 1 2) (list 1 2 3) 1)) 
 (count-leaves ex1)
 (count-leaves ex2)
 (count-leaves-alt ex1)
 (count-leaves-alt ex2)
+(count-leaves-alt ex3)
