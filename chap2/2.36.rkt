@@ -10,11 +10,20 @@
 (define (accumulate-n op init seqs)
   (if (null? (car seqs))
       '()
-      (cons (accumulate op init (car (car seqs)))
-            (accumulate-n op init (cdr seqs)
+      (cons (accumulate op init (map car seqs))
+            (accumulate-n op init (map cdr seqs)
                           ))))
 
+#| Just for my own practice |#
+(define (map-j op items)
+  (if (null? items)
+      '()
+      (cons (op (car items)) (map-j op (cdr items)))))
+
+#| Testing |#
 (define ex (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12)))
 
+(map car ex)
+(map-j car ex)
 (accumulate-n + 0 ex)
 
