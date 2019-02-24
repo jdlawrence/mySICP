@@ -23,32 +23,36 @@
   (flatmap (lambda (i)
                    (map (lambda (j) (list i j))
                         (enumerate-interval 1 (- i 1))))
-           (enumerate-interval 1 n)))
+           (enumerate-interval 2 n)))
 
+#| Answer |#
 (define (unique-triplet n)
-  (flatmap (lambda (i)
-                   (map (lambda (j)
-                          (map (lambda (k) (list i j k))
-                               (enumerate-interval 1 (- j 1))))
-                        (enumerate-interval 1 (- i 1))))
-           (enumerate-interval 1 n)))
-
-#|
-(define (prime-sum-pairs n)
-  (map make-pair-sum
-       (filter prime-sum? (flatmap
-                           (lambda (i)
-                             (map (lambda (j) (list i j))
-                                  (enumerate-interval 1 (- i 1))))
-                           (enumerate-interval 1 n)))))
-
-(define (prime-sum-pairs-simple n)
-  (map make-pair-sum
-       (filter prime-sum? (unique-pairs n))))
-|#
-
+  (flatmap (lambda (i) i)
+           (flatmap (lambda (i)
+                      (map (lambda (j)
+                             (map (lambda (k) (list i j k))
+                                  (enumerate-interval 1 (- j 1))))
+                           (enumerate-interval 1 (- i 1))))
+                    (enumerate-interval 3 n))))
+#| Extra credit |#
+(define (unique-fourplex n)
+  (flatmap (lambda (i) i)
+           (flatmap (lambda (i) i)
+                    (flatmap (lambda (i)
+                               (map (lambda (j)
+                                      (map (lambda (k)
+                                             (map (lambda (l) (list i j k l))
+                                                  (enumerate-interval 1 (- k 1))))
+                                           (enumerate-interval 1 (- j 1))))
+                                    (enumerate-interval 1 (- i 1))))
+                             (enumerate-interval 4 n))))) 
 #| Testing |#
-(unique-pairs 6)
-(unique-triplet 4)
-;(prime-sum-pairs 6)
-;(prime-sum-pairs-simple 6)
+(unique-pairs 4)
+(unique-triplet 5)
+(unique-fourplex 8)
+#|
+(map (lambda (i)
+       (map (lambda (j) (list i j))
+            (enumerate-interval 1 (- i 1))))
+     (list 1 2 3 4))
+|#
