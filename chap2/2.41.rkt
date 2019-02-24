@@ -26,7 +26,7 @@
            (enumerate-interval 2 n)))
 
 #| Answer |#
-(define (unique-triplet n)
+(define (unique-triplets n)
   (flatmap (lambda (i) i)
            (flatmap (lambda (i)
                       (map (lambda (j)
@@ -34,6 +34,12 @@
                                   (enumerate-interval 1 (- j 1))))
                            (enumerate-interval 1 (- i 1))))
                     (enumerate-interval 3 n))))
+
+(define (filtered-triplets sum items)
+  (filter (lambda (item) (= sum (accumulate + 0 item))) items))
+
+(define (triplet-sum n sum)
+  (filtered-triplets sum (unique-triplets n)))
 #| Extra credit |#
 (define (unique-fourplex n)
   (flatmap (lambda (i) i)
@@ -47,12 +53,7 @@
                                     (enumerate-interval 1 (- i 1))))
                              (enumerate-interval 4 n))))) 
 #| Testing |#
-(unique-pairs 4)
-(unique-triplet 5)
-(unique-fourplex 8)
-#|
-(map (lambda (i)
-       (map (lambda (j) (list i j))
-            (enumerate-interval 1 (- i 1))))
-     (list 1 2 3 4))
-|#
+;(unique-pairs 4)
+;(unique-triplets 3)
+;(unique-fourplex 8)
+(triplet-sum 9 8) 
