@@ -23,7 +23,7 @@
   (define (sub length-so-far result)
     (if (= length-so-far length)
         result
-        (sub (+ length-so-far 1) (append result (list '()) ))))
+        (sub (+ length-so-far 1) (append result (list 0) ))))
   (sub 0 (list)))
 
 (length (list ))
@@ -48,17 +48,10 @@
 (define (create-board n)
   (map (lambda (x) (create-row n)) (enumerate-interval 1 n)))
 
-(create-board 3)
+(create-board 6)
 
 (define (flatmap proc seq)
   (accumulate append '() (map proc seq)))
-
-;(flatmap (lambda (x) (* x x)) (list 1 2 3 4))
-
-(flatmap (lambda (i)
-       (map (lambda (j) (list i j))
-            (enumerate-interval 1 (- i 1))))
-     (enumerate-interval 1 4))
 
 #|
 (define (queens board-size)
@@ -77,8 +70,14 @@
   (queen-cols board-size))
 |#
 
+;(define (place-queen row col board)
+(list-ref (list 1 2 3 4 5) 4)
+  
+
 ;WORK ON THIS!
+#|
 (map (lambda (new-row)
                    (adjoin-position
                     new-row k rest-of-queens))
                  (enumerate-interval 1 board-size))
+|#
