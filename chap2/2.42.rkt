@@ -70,8 +70,25 @@
   (queen-cols board-size))
 |#
 
-;(define (place-queen row col board)
-(list-ref (list 1 2 3 4 5) 4)
+
+(define (change-list-val val index aList)
+  (define (sub curr currList result)
+    (if (= curr index)
+        (append result (list val) (cdr currList))
+        (sub (+ curr 1) (cdr currList) (append result (list (car currList))))))
+  (sub 0 aList (list)))
+
+;(change-list-val 10 7 (list 1 2 3 4 5))
+
+(define (place-queen row col board)
+  (define (sub rowIndex currentBoard result)
+    (if (= rowIndex row)
+        (append result (list (change-list-val 1 col (car currentBoard))) (cdr currentBoard))
+        (sub (+ rowIndex 1) (cdr currentBoard) (list (append result (car currentBoard))))))
+  (sub 0 board (list)))
+
+(place-queen 0 2 (list (list 0 0 0) (list 0 0 0) (list 0 0 0)))
+;(list-ref (list 1 2 3 4 5) 4
   
 
 ;WORK ON THIS!
