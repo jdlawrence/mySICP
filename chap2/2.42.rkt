@@ -26,29 +26,15 @@
         (sub (+ length-so-far 1) (append result (list 0) ))))
   (sub 0 (list)))
 
-(length (list ))
-(create-row 3)
-#|
-(define (create-board n)
-  (define (sub rows-so-far result)
-    (if (= rows-so-far n)
-        result
-        (sub (+ rows-so-far 1) (append result (create-row n)))))
-  (sub 0 (list)))
-|#
-
-;(map (lambda (x) (create-row 3)) (list 1 2 3 4))
-
 (define (enumerate-interval low high)
   (if (> low high)
       '()
       (cons low (enumerate-interval (+ low 1) high))))
 
-(enumerate-interval 1 4)
 (define (create-board n)
   (map (lambda (x) (create-row n)) (enumerate-interval 1 n)))
 
-(create-board 6)
+;(create-board 6)
 
 (define (flatmap proc seq)
   (accumulate append '() (map proc seq)))
@@ -71,30 +57,34 @@
 |#
 
 
+;NOTE: the index is 1-based and not 0 based
 (define (change-list-val val index aList)
   (define (sub curr currList result)
     (if (= curr index)
         (append result (list val) (cdr currList))
         (sub (+ curr 1) (cdr currList) (append result (list (car currList))))))
-  (sub 0 aList (list)))
+  (sub 1 aList (list)))
 
-;(change-list-val 10 7 (list 1 2 3 4 5))
+;(change-list-val 8 5 (list 1 2 3 4 5))
 
-(define (place-queen row col board)
+;NOTE: both row and column are 1-based and not 0-based
+(define (adjoin-position row col board)
   (define (sub rowIndex currentBoard result)
     (if (= rowIndex row)
         (append result (list (change-list-val 1 col (car currentBoard))) (cdr currentBoard))
-        (sub (+ rowIndex 1) (cdr currentBoard) (list (append result (car currentBoard))))))
-  (sub 0 board (list)))
+        (sub (+ rowIndex 1) (cdr currentBoard) (append result (list (car currentBoard))) )))
+  (sub 1 board (list)))
 
-(place-queen 0 2 (list (list 0 0 0) (list 0 0 0) (list 0 0 0)))
-;(list-ref (list 1 2 3 4 5) 4
-  
+(adjoin-position 3 3 (list (list 0 0 0) (list 0 0 0) (list 0 0 0)))
 
-;WORK ON THIS!
-#|
+(define rest-of-queens (list (list 0 0 0 0 0) (list 0 0 0 0 0) (list 0 0 0 0 0) (list 0 0 0 0 0) (list 0 0 0 0 0)))
+(define k 5)
+(define board-size 5)
+
 (map (lambda (new-row)
                    (adjoin-position
                     new-row k rest-of-queens))
                  (enumerate-interval 1 board-size))
-|#
+
+;WORK ON THIS
+(define (safe col list-of-boards))
