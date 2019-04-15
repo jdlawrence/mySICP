@@ -75,16 +75,30 @@
         (sub (+ rowIndex 1) (cdr currentBoard) (append result (list (car currentBoard))) )))
   (sub 1 board (list)))
 
-(adjoin-position 3 3 (list (list 0 0 0) (list 0 0 0) (list 0 0 0)))
+;(adjoin-position 3 3 (list (list 0 0 0) (list 0 0 0) (list 0 0 0)))
 
-(define rest-of-queens (list (list 0 0 0 0 0) (list 0 0 0 0 0) (list 0 0 0 0 0) (list 0 0 0 0 0) (list 0 0 0 0 0)))
-(define k 5)
-(define board-size 5)
+(define rest-of-queens (list (list 0 0 1 0) (list 1 0 0 0) (list 0 0 0 0) (list 0 1 0 0)) )
+(define k 4)
+(define board-size 4)
 
+rest-of-queens
 (map (lambda (new-row)
                    (adjoin-position
                     new-row k rest-of-queens))
                  (enumerate-interval 1 board-size))
 
 ;WORK ON THIS
-(define (safe col list-of-boards))
+(list-ref (list 1 2 3 4 5 6 7) 3)
+
+          
+(define (get-col board col)
+  (define (sub result rest)
+    (if (null? rest)
+        result
+        (sub (append result (list (list-ref (car rest) (- col 1)))) (cdr rest))))
+  (sub (list) board))
+
+(get-col rest-of-queens 1)
+    
+;(define (safe col list-of-boards))
+;   (
