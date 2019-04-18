@@ -1,12 +1,4 @@
 #lang racket
-#|
-(list 
-(list '() '() '())
-(list '() '() '())
-(list '() '() '())
-)
-|#
-
 (define (accumulate proc init items)
   (if (null? items)
       init
@@ -74,6 +66,8 @@
         (append result (list (change-list-val 1 col (car currentBoard))) (cdr currentBoard))
         (sub (+ rowIndex 1) (cdr currentBoard) (append result (list (car currentBoard))) )))
   (sub 1 board (list)))
+
+(define 
 
 ;(adjoin-position 3 3 (list (list 0 0 0) (list 0 0 0) (list 0 0 0)))
 
