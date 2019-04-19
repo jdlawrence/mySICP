@@ -60,29 +60,36 @@
 ;(change-list-val 8 5 (list 1 2 3 4 5))
 
 ;NOTE: both row and column are 1-based and not 0-based
+#|
 (define (adjoin-position row col board)
   (define (sub rowIndex currentBoard result)
     (if (= rowIndex row)
         (append result (list (change-list-val 1 col (car currentBoard))) (cdr currentBoard))
         (sub (+ rowIndex 1) (cdr currentBoard) (append result (list (car currentBoard))) )))
   (sub 1 board (list)))
+|#
 
-(define 
+(define (adjoin-position row col other-queens)
+  (define (sub rowIndex result)
+    (if (> rowIndex row)
+        result
+        (sub (+ rowIndex 1) (list (append other-queens (list (list rowIndex col)))))))
+  (sub 1 (list)))
 
-;(adjoin-position 3 3 (list (list 0 0 0) (list 0 0 0) (list 0 0 0)))
 
-(define rest-of-queens (list (list 0 0 1 0) (list 1 0 0 0) (list 0 0 0 0) (list 0 1 0 0)) )
+
+;(define rest-of-queens (list (list 0 0 1 0) (list 1 0 0 0) (list 0 0 0 0) (list 0 1 0 0)) )
+(define rest-of-queens (list (list 2 1) (list 4 2) (list 1 3)))
+;(adjoin-position 3 3 rest-of-queens)
 (define k 4)
 (define board-size 4)
 
-rest-of-queens
 (map (lambda (new-row)
                    (adjoin-position
                     new-row k rest-of-queens))
                  (enumerate-interval 1 board-size))
 
 ;WORK ON THIS
-(list-ref (list 1 2 3 4 5 6 7) 3)
 
           
 (define (get-col board col)
