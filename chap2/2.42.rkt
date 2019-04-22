@@ -4,13 +4,6 @@
       init
       (proc (car items) (accumulate proc init (cdr items)))))
 
-(define (map-j proc seq)
-  (if (null? seq)
-      seq
-      (cons (proc (car seq)) (map-j proc (cdr seq)))))
-
-;(append (list 4 5 6) (list 1 2 3))
-
 (define (create-row length)
   (define (sub length-so-far result)
     (if (= length-so-far length)
@@ -23,15 +16,81 @@
       '()
       (cons low (enumerate-interval (+ low 1) high))))
 
-(define (create-board n)
-  (map (lambda (x) (create-row n)) (enumerate-interval 1 n)))
-
-;(create-board 6)
-
 (define (flatmap proc seq)
   (accumulate append '() (map proc seq)))
 
+(define (adjoin-position row col other-queens)
+  (define (sub rowIndex result)
+    (if (> rowIndex row)
+        result
+        (sub (+ rowIndex 1) (append other-queens (list (list rowIndex col))))))
+  (sub 1 (list)))
+
+(define rest-of-queens (list (list 2 1) (list 4 2) (list 1 3)))
+rest-of-queens
+(adjoin-position 3 3 rest-of-queens)
+(define k 4)
+(define board-size 4)
+
 #|
+(map (lambda (new-row)
+                   (adjoin-position
+                    new-row k rest-of-queens))
+                 (enumerate-interval 1 board-size))
+|#
+
+;WORK ON THIS
+
+          
+(define (get-col board col)
+  (define (sub result rest)
+    (if (null? rest)
+        result
+        (sub (append result (list (list-ref (car rest) (- col 1)))) (cdr rest))))
+  (sub (list) board))
+
+(define (get-rows queens)
+  (define (sub result rest)
+    (if (null? rest)
+        result
+        (sub (append result (list (car (car rest)))) (cdr rest))))
+  (sub (list) queens))
+
+(define (safe-row col positions)
+  (define (sub index queen-list new-queen )
+    (if (< index col)
+        (if (= (car queen-list) new-queen)
+          #f
+          (sub (+ index 1) (cdr queen-list) new-queen))
+        #t))
+  (sub 1 (get-rows positions) (car (list-ref positions (- col 1)))))
+
+(define (slope q1 q2)
+  (let ((x1 (first q1))
+        (x2 (first q2))
+        (y1 (second q1))
+        (y2 (second q2)))
+    (if (= x2 x1)
+        +nan.0
+        (/ (- y2 y1) (- x2 x1)))))
+
+(define (safe-diag col positions)
+  (define (sub index queen-list new-queen)
+    (if (< index col)
+        (if ( = 1 (abs (slope (car queen-list) new-queen)))
+            #f
+            (sub (+ index 1) (cdr queen-list) new-queen))
+        #t))
+  (sub 1 positions (list-ref positions (- col 1))))
+
+(define sample-board (list (list 2 1) (list 4 2) (list 1 3) (list 2 2)))
+(safe-diag 4 sample-board)
+
+(define (safe? k positions)
+  (and (safe-row k positions)
+       (safe-diag k positions)))
+
+(define empty-board (list))
 (define (queens board-size)
   (define (queen-cols k)
     (if (= k 0)
@@ -46,60 +105,10 @@
                  (enumerate-interval 1 board-size)))
           (queen-cols (- k 1))))))
   (queen-cols board-size))
-|#
 
+(length (queens 4))
+(length (queens 5))
+(length (queens 6))
+(length (queens 7))
+(length (queens 8))
 
-;NOTE: the index is 1-based and not 0 based
-(define (change-list-val val index aList)
-  (define (sub curr currList result)
-    (if (= curr index)
-        (append result (list val) (cdr currList))
-        (sub (+ curr 1) (cdr currList) (append result (list (car currList))))))
-  (sub 1 aList (list)))
-
-;(change-list-val 8 5 (list 1 2 3 4 5))
-
-;NOTE: both row and column are 1-based and not 0-based
-#|
-(define (adjoin-position row col board)
-  (define (sub rowIndex currentBoard result)
-    (if (= rowIndex row)
-        (append result (list (change-list-val 1 col (car currentBoard))) (cdr currentBoard))
-        (sub (+ rowIndex 1) (cdr currentBoard) (append result (list (car currentBoard))) )))
-  (sub 1 board (list)))
-|#
-
-(define (adjoin-position row col other-queens)
-  (define (sub rowIndex result)
-    (if (> rowIndex row)
-        result
-        (sub (+ rowIndex 1) (list (append other-queens (list (list rowIndex col)))))))
-  (sub 1 (list)))
-
-
-
-;(define rest-of-queens (list (list 0 0 1 0) (list 1 0 0 0) (list 0 0 0 0) (list 0 1 0 0)) )
-(define rest-of-queens (list (list 2 1) (list 4 2) (list 1 3)))
-;(adjoin-position 3 3 rest-of-queens)
-(define k 4)
-(define board-size 4)
-
-(map (lambda (new-row)
-                   (adjoin-position
-                    new-row k rest-of-queens))
-                 (enumerate-interval 1 board-size))
-
-;WORK ON THIS
-
-          
-(define (get-col board col)
-  (define (sub result rest)
-    (if (null? rest)
-        result
-        (sub (append result (list (list-ref (car rest) (- col 1)))) (cdr rest))))
-  (sub (list) board))
-
-(get-col rest-of-queens 1)
-    
-;(define (safe col list-of-boards))
-;   (
