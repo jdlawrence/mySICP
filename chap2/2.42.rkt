@@ -26,28 +26,11 @@
         (sub (+ rowIndex 1) (append other-queens (list (list rowIndex col))))))
   (sub 1 (list)))
 
-(define rest-of-queens (list (list 2 1) (list 4 2) (list 1 3)))
-rest-of-queens
-(adjoin-position 3 3 rest-of-queens)
+;(define rest-of-queens (list (list 2 1) (list 4 2) (list 1 3)))
+;rest-of-queens
+;(adjoin-position 3 3 rest-of-queens)
 (define k 4)
 (define board-size 4)
-
-#|
-(map (lambda (new-row)
-                   (adjoin-position
-                    new-row k rest-of-queens))
-                 (enumerate-interval 1 board-size))
-|#
-
-;WORK ON THIS
-
-          
-(define (get-col board col)
-  (define (sub result rest)
-    (if (null? rest)
-        result
-        (sub (append result (list (list-ref (car rest) (- col 1)))) (cdr rest))))
-  (sub (list) board))
 
 (define (get-rows queens)
   (define (sub result rest)
@@ -83,8 +66,10 @@ rest-of-queens
         #t))
   (sub 1 positions (list-ref positions (- col 1))))
 
+#| More Testing 
 (define sample-board (list (list 2 1) (list 4 2) (list 1 3) (list 2 2)))
 (safe-diag 4 sample-board)
+|#
 
 (define (safe? k positions)
   (and (safe-row k positions)
@@ -106,9 +91,9 @@ rest-of-queens
           (queen-cols (- k 1))))))
   (queen-cols board-size))
 
-(length (queens 4))
-(length (queens 5))
-(length (queens 6))
-(length (queens 7))
-(length (queens 8))
+(queens 4)
+;(length (queens 5))
+;(length (queens 6))
+;(length (queens 7))
+;(length (queens 8))
 
