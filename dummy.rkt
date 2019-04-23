@@ -6,7 +6,7 @@
        (op (car sequence)
            (accumulate op initial (cdr sequence)))))
 
-(accumulate + 0 (list 1 2 3 4 5))
+;(accumulate + 0 (list 1 2 3 4 5))
 
 (define (enumerate-interval low high)
   (if (> low high)
@@ -18,9 +18,12 @@
                    (map (lambda (j) (list i j))
                         (enumerate-interval 1 (- i 1))))
                  (enumerate-interval 1 5)))
+(define (flatmap proc seq)
+  (accumulate append '() (map proc seq)))
+
+(flatmap (lambda (j) (list (* j j))) (enumerate-interval 1 6))
 
 (map (lambda (i)
-       (list i))
-     ;(map (lambda (j) (list i j))
-     ;     (enumerate-interval 1 (- i 1))))
-     (enumerate-interval 1 3))
+       (map (lambda (j) (list i j))
+            (enumerate-interval 1 (- i 1))))
+     (enumerate-interval 1 5))
