@@ -32,6 +32,7 @@
              (* scalar (ycor-vect vect))))   
 
 #| Testing |#
+(cdr (list 1 2 3 4 5))
 (make-vect 2 3)
 (define ex1 (make-vect 4 9))
 (define ex2 (make-vect 11 14))
