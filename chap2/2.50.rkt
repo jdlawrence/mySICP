@@ -72,7 +72,7 @@
      segment-list)))
 
 #| From 2.49 |#
-#|
+
 (define wave ((segments->painter (list
                      (make-segment (make-vect .25 0) (make-vect .35 .5)) 
                      (make-segment (make-vect .35 .5) (make-vect .3 .6)) 
@@ -97,7 +97,7 @@
                      (make-segment (make-vect .5 .3) (make-vect .4 0)) 
                      (make-segment (make-vect .4 0) (make-vect .25 0))))
  (make-frame (make-vect 0 500) (make-vect 500 0) (make-vect 0 -500))))
-|#
+
 
 (define (transform-painter painter origin corner1 corner2)
   (lambda (frame)
@@ -120,6 +120,7 @@
    (make-vect 1.0 0.5) (make-vect 0.5 1.0)))
 
 (shrink-to-upper-right wave)
+((shrink-to-upper-right wave) (make-frame (make-vect 0 500) (make-vect 500 0) (make-vect 0 -500)))
 ;(shrink-to-upper-right (make-frame (make-vect 0 500) (make-vect 500 0) (make-vect 0 -500)))
 
 #| Answer |#
@@ -129,4 +130,14 @@
                      (make-vect 1.0 1.0) ; new end of edge1
                      (make-vect 0.0 0.0))) ; new end of edge2
 
+(define (180-degrees painter)
+  (transform-painter painter
+                     (make-vect 1.0 1.0) ; new origin
+                     (make-vect 0.0 1.0) ; new end of edge1
+                     (make-vect 1.0 0.0))) ; new end of edge2
 
+(define (270-degrees painter)
+  (transform-painter painter
+                     (make-vect 1.0 0.0) ; new origin
+                     (make-vect 1.0 1.0) ; new end of edge1
+                     (make-vect 0.0 0.0))) ; new end of edge2
