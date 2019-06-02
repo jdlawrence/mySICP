@@ -1,14 +1,27 @@
 #lang racket
-(define (make-sum a1 a2) (list '+ a1 a2))
-
-(make-sum 'x 'y)
-
 #| Given |#
 (define (=number? exp num) (and (number? exp) (= exp num)))
 
+(define (variable? x) (symbol? x))
+
+(define (same-variable? v1 v2)
+  (and (variable? v1) (variable? v2) (eq? v1 v2)))
+
+(define (make-sum a1 a2) (list '+ a1 a2))
+
+(define (make-product m1 m2) (list '* m1 m2))
+
+(define (make-exponent base exponent) (list '** base exponent))
+
+(define (sum? x) (and (pair? x) (eq? (car x) '+)))
+(define (addend s) (cadr s))
+(define (augend s) (caddr s))
+(define (product? x) (and (pair? x) (eq? (car x) '*)))
+(define (multiplier p) (cadr p))
+(define (multiplicand p) (caddr p))
+
 #| Answer |#
 (define (exponentiation? x) (and (pair? x) (eq? (car x) '**)))
-(define (make-exponent base exponent) (list '** base exponent))
 
 (define (base e) (cadr e))
 (define (exponent e) (caddr e))
@@ -44,5 +57,6 @@
          (make-product (exponent exp) (make-exponent (base exp) (make-sum (exponent exp) -1))))
         (else
          (error "unknown expression type: DERIV" exp))))
+
 #| Testing |#
-(make-exponentiation 2 4)
+(deriv '(+ x 3) 'x)
