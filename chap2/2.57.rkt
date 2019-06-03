@@ -48,7 +48,6 @@
 (define (augend s) (if (null? (cdddr s))
                        (caddr s)
                        (cons '+ (cdddr s))))
-                    ;make-sum 0 (cdr (cdr s))))
 (define (multiplier p) (cadr p))
 (define (multiplicand p) (if (null? (cdddr p))
                              (caddr p)
