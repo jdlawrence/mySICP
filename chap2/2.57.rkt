@@ -7,33 +7,63 @@
 (define (same-variable? v1 v2)
   (and (variable? v1) (variable? v2) (eq? v1 v2)))
 
-(define (make-sum a1 a2) (list '+ a1 a2))
+;(define (make-sum a1 a2) (list '+ a1 a2))
+(define (make-sum a1 a2)
+  (cond ((=number? a1 0) a2)
+        ((=number? a2 0) a1)
+        ((and (number? a1) (number? a2))
+         (+ a1 a2))
+        (else (list '+ a1 a2))))
 
-(define (make-product m1 m2) (list '* m1 m2))
+;(define (make-product m1 m2) (list '* m1 m2))
+(define (make-product m1 m2)
+  (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+        ((=number? m1 1) m2)
+        ((=number? m2 1) m1)
+        ((and (number? m1) (number? m2)) (* m1 m2))
+        (else (list '* m1 m2))))
 
 (define (make-exponent base exponent) (list '** base exponent))
 
 (define (sum? x) (and (pair? x) (eq? (car x) '+)))
-(define (addend s) (cadr s))
-(define (augend s) (caddr s))
+;(define (addend s) (cadr s))
+;(define (augend s) (caddr s))
 (define (product? x) (and (pair? x) (eq? (car x) '*)))
-(define (multiplier p) (cadr p))
-(define (multiplicand p) (caddr p))
+;(define (multiplier p) (cadr p))
+;(define (multiplicand p) (caddr p))
 
-#| Answer |#
+#| From 2.56 |#
 (define (exponentiation? x) (and (pair? x) (eq? (car x) '**)))
 
 (define (base e) (cadr e))
 (define (exponent e) (caddr e))
 
-#| Assumes a non-negative exponent |#
-(define (** base exponent)
+(define (** base exponent) ;Assumes a non-negative exponent
   (if (= 1 exponent)
       base
       (* base (** base (- exponent 1)))))
-            
-(** 2 4)
 
+#| Answer |#
+(define (addend s) (cadr s))
+(define (augend s) (if (null? (cdddr s))
+                       (caddr s)
+                       (cons '+ (cdddr s))))
+                    ;make-sum 0 (cdr (cdr s))))
+(define (multiplier p) (cadr p))
+(define (multiplicand p) (if (null? (cdddr p))
+                             (caddr p)
+                             (cons '* (cdddr p))))
+
+#| Testing |#
+;(addend '(+ 3 x))
+;(augend '(+ 3 x))
+;(augend '(+ 3 x y z))
+;'(* x y)
+;(multiplier '(* x y z q))
+(multiplicand '(* x y))
+(multiplicand '(* x y z q))
+
+            
 (define (make-exponentiation base exponent)
   (cond ((=number? base 0) 0)
         ((=number? exponent 0) 1)
@@ -59,4 +89,5 @@
          (error "unknown expression type: DERIV" exp))))
 
 #| Testing |#
-(deriv '(+ x 3) 'x)
+(deriv '(* x y) 'x)
+(deriv '(* (* x y) (+ x 3)) 'x)

@@ -1,29 +1,10 @@
 #lang racket
+(define ex (list 1 2 3 4 5 6 7 8))
+(define ex2 (list '+ 1 2))
 
-(define (accumulate op initial sequence)
-   (if (null? sequence)
-       initial
-       (op (car sequence)
-           (accumulate op initial (cdr sequence)))))
+(cadr ex)
+(cddr ex)
+(cdddr ex)
+(cddddr ex)
 
-;(accumulate + 0 (list 1 2 3 4 5))
-
-(define (enumerate-interval low high)
-  (if (> low high)
-      '()
-      (cons low (enumerate-interval (+ low 1) high))))
-
-(accumulate
- append '() (map (lambda (i)
-                   (map (lambda (j) (list i j))
-                        (enumerate-interval 1 (- i 1))))
-                 (enumerate-interval 1 5)))
-(define (flatmap proc seq)
-  (accumulate append '() (map proc seq)))
-
-(flatmap (lambda (j) (list (* j j))) (enumerate-interval 1 6))
-
-(map (lambda (i)
-       (map (lambda (j) (list i j))
-            (enumerate-interval 1 (- i 1))))
-     (enumerate-interval 1 5))
+(cddr ex2)
