@@ -30,22 +30,21 @@
 (define (addend s) (car s))
 (define (augend s) (if (null? (cdr s))
                        (car s)
-                       (cddr s)))
+                       (caddr s)))
 
 (define (multiplier p) (car p))
 (define (multiplicand p) (if (null? (cdr p))
                              (car p)
-                             (cons '* (cdddr p))))
+                             (caddr p)))
 
 #| Testing |#
 (addend '(3 + x))
-(addend '(3 + x + y + z))
 (augend '(3 + x))
-(augend '(3 + x + y + z))
-(multiplier '(x * y * x y z q))
-(multiplicand '(* x y))
-(multiplicand '(* x y z q))
-
+(addend '(3 + (x + (y + z))))
+(augend '(3 + (x + (y + z))))
+(multiplier '(x * (y * (z * (q)))))
+(multiplicand '(x * (y)))
+(multiplicand '(x * (y * (z * (q)))))
 
 #|
 (define (make-exponentiation base exponent)
