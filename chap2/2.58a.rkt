@@ -23,6 +23,7 @@
 
 (define (make-exponent base exponent) (list '** base exponent))
 
+;(define (sum? x) (and (pair? x) (eq? (cadr x) '+)))
 (define (sum? x) (and (pair? x) (eq? (cadr x) '+)))
 (define (product? x) (and (pair? x) (eq? (cadr x) '*)))
 
@@ -38,13 +39,15 @@
                              (caddr p)))
 
 #| Testing |#
-(addend '(3 + x))
-(augend '(3 + x))
-(addend '(3 + (x + (y + z))))
-(augend '(3 + (x + (y + z))))
-(multiplier '(x * (y * (z * (q)))))
-(multiplicand '(x * (y)))
-(multiplicand '(x * (y * (z * (q)))))
+(sum? '(3 + x))
+(product? '(3 * x))
+;(addend '(3 + x))
+;(augend '(3 + x))
+;(addend '(3 + (x + (y + z))))
+;(augend '(3 + (x + (y + z))))
+;(multiplier '(x * (y * (z * (q)))))
+;(multiplicand '(x * (y)))
+;(multiplicand '(x * (y * (z * (q)))))
 
 #|
 (define (make-exponentiation base exponent)
@@ -73,5 +76,5 @@
          (error "unknown expression type: DERIV" exp))))
 
 #| Testing |#
-;(deriv '(* x y) 'x)
-;(deriv '(* (* x y) (+ x 3)) 'x)
+(deriv '(x * y) 'x)
+(deriv '(x + (3 * (x + (y + 2)))) 'x)
