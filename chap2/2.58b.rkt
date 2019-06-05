@@ -38,6 +38,10 @@
                              (car p)
                              (caddr p)))
 
+(= (cadddr '(x + 2 * y)) '))
+
+;(define (reformat expr)
+  ;(if (= (caddr expr
 #| Testing |#
 (sum? '(3 + x))
 (product? '(3 * x))
