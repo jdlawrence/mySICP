@@ -27,21 +27,28 @@
 (define (sum? x) (and (pair? x) (eq? (cadr x) '+)))
 (define (product? x) (and (pair? x) (eq? (cadr x) '*)))
 
-#| Answer |#
+#| Answer: The only real change from 2.58a to 2.58b is changing the caddr in to cddr |#
+(define (simplify exp)
+  (if (null? (cdr exp)) (car exp) exp))
+
+(define (augend s) (simplify (cddr s)))
+(define (multiplicand p) (simplify (cddr p)))
 (define (addend s) (car s))
+#|
 (define (augend s) (if (null? (cdr s))
                        (car s)
                        (caddr s)))
+|#
 
 (define (multiplier p) (car p))
+
+#|
 (define (multiplicand p) (if (null? (cdr p))
                              (car p)
                              (caddr p)))
+|#
 
-(= (cadddr '(x + 2 * y)) '))
 
-;(define (reformat expr)
-  ;(if (= (caddr expr
 #| Testing |#
 (sum? '(3 + x))
 (product? '(3 * x))
@@ -80,5 +87,7 @@
          (error "unknown expression type: DERIV" exp))))
 
 #| Testing |#
-(deriv '(x * y) 'x)
-(deriv '(x + (3 * (x + (y + 2)))) 'x)
+(deriv '(x + y) 'x)
+;(deriv '(x * y) 'x)
+;(deriv '(x + (3 * (x + (y + 2)))) 'x)
+;(deriv '(x + 3 * (x + y + 2)) 'x)
