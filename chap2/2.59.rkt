@@ -19,6 +19,7 @@
 
 #| Answer |#
 
+#| First attempt with sub routine |#
 (define (union-set set1 set2)
   (define (sub s1 s2 result)
     (cond ((and (null? s1) (null? s2)) result)
@@ -36,11 +37,17 @@
                (sub (cdr s1) s2 (cons (car s1) result))))))
   (sub set1 set2 '()))
 
+#| Second attempt with no subroutine |#
+(define (union-set2 set1 set2)
+  (cond ((null? set1) set2)
+        ((null? set2) set1)
+        ((element-of-set? (car set1) set2) (union-set2 (cdr set1) set2))
+        (else (cons (car set1) (union-set2 (cdr set1) set2)))))
+
+
 (define s1 (list 1 2 3))
 (define s2 (list 3 4 5))
 
 (union-set s1 s2)
+(union-set2 s1 s2)
 
-
-
-(pair? '())
