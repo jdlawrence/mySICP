@@ -10,13 +10,11 @@ Time complexity is still O(n)
         (else (element-of-set? x (cdr set)))))
 
 
-#| Adjoin-set also doens't change at all
-Time complexity is still O(n)
+#| Adjoin-set can be improved
+Time complexity is now O(1)
 |#
 (define (adjoin-set x set)
-  (if (element-of-set? x set)
-      set
-      (cons x set)))
+  (cons x set))
 
 #| Union-set: if you can have duplicates in a set, then union-set
 just has to join the two sets together
