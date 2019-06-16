@@ -2,7 +2,6 @@
 #| Answers |#
 
 #| Adjoin-set: Assumes the set is ordered
-Time complexity is now O(1)
 |#
 (define (adjoin-set x set)
   (cond ((null? set) (list x))
