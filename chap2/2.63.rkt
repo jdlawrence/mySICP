@@ -35,5 +35,21 @@
 (define 9-t (make-tree 9 null 11-t))
 (define 7-t (make-tree 7 3-t 9-t))
 
+(define 8-t (make-tree 8 null null))
+(define 6-t (make-tree 6 null 8-t))
+(define 4-t (make-tree 4 null 6-t))
+(define 2-t (make-tree 2 null 4-t))
 (tree->list-1 7-t)
 (tree->list-2 7-t)
+
+(tree->list-1 2-t)
+(tree->list-2 2-t)
+
+(define 13-t (make-tree 13 11-t null))
+(define 15-t (make-tree 15 13-t null))
+(define 17-t (make-tree 15 15-t null))
+(define 19-t (make-tree 17 17-t null))
+
+
+(tree->list-1 19-t)
+(tree->list-2 19-t)
