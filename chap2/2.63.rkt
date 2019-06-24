@@ -66,8 +66,10 @@ For figure 2.16, the list is (list 1 3 5 7 9 11)
 
 #| Answer: Part B |#
 #|
-Tree->list-1 calls append for each iteration. Append is O(n), and
-tree->list-1 visits each node once, so it is O(n^2) overall
+Tree->list-1 calls append for each iteration. Append is O(n), and this case, the "n"
+is the left half of the tree, so on average this is called n/2 times for each item in the tree
+We have to visit each node once in this procedure, and so visiting each node once and then
+appending n/2 times produces an overall time complexity of O(n*log(n))
 
 Tree->list-2 uses an accumulator, and just visits each node once,
 therefor it is O(n) overall
