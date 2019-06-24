@@ -35,21 +35,40 @@
 (define 9-t (make-tree 9 null 11-t))
 (define 7-t (make-tree 7 3-t 9-t))
 
-(define 8-t (make-tree 8 null null))
-(define 6-t (make-tree 6 null 8-t))
-(define 4-t (make-tree 4 null 6-t))
-(define 2-t (make-tree 2 null 4-t))
+(define 11-tb (make-tree 11 null null))
+(define 9-tb (make-tree 9 null 11-tb))
+(define 5-tb (make-tree 5 null null))
+(define 7-tb (make-tree 7 5-tb 9-tb))
+(define 1-tb (make-tree 1 null null))
+(define 3-tb (make-tree 3 1-tb 7-tb))
+
+(define 1-tc (make-tree 1 null null))
+(define 7-tc (make-tree 7 null null))
+(define 11-tc (make-tree 11 null null))
+(define 3-tc (make-tree 3 1-tc null))
+(define 9-tc (make-tree 9 7-tc 11-tc))
+(define 5-tc (make-tree 5 3-tc 9-tc))
+
 (tree->list-1 7-t)
 (tree->list-2 7-t)
 
-(tree->list-1 2-t)
-(tree->list-2 2-t)
+(tree->list-1 3-tb)
+(tree->list-2 3-tb)
 
-(define 13-t (make-tree 13 11-t null))
-(define 15-t (make-tree 15 13-t null))
-(define 17-t (make-tree 15 15-t null))
-(define 19-t (make-tree 17 17-t null))
+(tree->list-1 5-tc)
+(tree->list-2 5-tc)
 
+#| Answer: Part A |#
+#|
+Both functions produce the same lists.
+For figure 2.16, the list is (list 1 3 5 7 9 11)
+|#
 
-(tree->list-1 19-t)
-(tree->list-2 19-t)
+#| Answer: Part B |#
+#|
+Tree->list-1 calls append for each iteration. Append is O(n), and
+tree->list-1 visits each node once, so it is O(n^2) overall
+
+Tree->list-2 uses an accumulator, and just visits each node once,
+therefor it is O(n) overall
+|#
