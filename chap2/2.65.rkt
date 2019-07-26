@@ -67,10 +67,10 @@
 
 #| Answer |#
 (define (union-set-tree s1 s2)
-  (union-set (tree->list-2 s1) (tree->list-2 s2)))
+  (list->tree (union-set (tree->list-2 s1) (tree->list-2 s2))))
 
 (define (intersection-set-tree s1 s2)
-  (intersection-set (tree->list-2 s1) (tree->list-2 s2)))
+  (list->tree (intersection-set (tree->list-2 s1) (tree->list-2 s2))))
 
 #| Testing |# 
 (define s1 (list->tree (list 1 2 3)))
