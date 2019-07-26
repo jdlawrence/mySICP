@@ -51,13 +51,33 @@
         ((< (car s2) (car s1)) (cons (car s2) (union-set s1 (cdr s2))))
         (else (union-set (cdr s1) s2))))
 
+(define (intersection-set set1 set2)
+  (if (or (null? set1) (null? set2))
+      '()
+      (let ((x1 (car set1)) (x2 (car set2)))
+        (cond ((= x1 x2)
+               (cons x1 (intersection-set (cdr set1)
+                                          (cdr set2))))
+              ((< x1 x2)
+               (intersection-set (cdr set1) set2))
+              ((< x2 x1)
+               (intersection-set set1 (cdr set2)))))))
+
+
+
+#| Answer |#
+(define (union-set-tree s1 s2)
+  (union-set (tree->list-2 s1) (tree->list-2 s2)))
+
+(define (intersection-set-tree s1 s2)
+  (intersection-set (tree->list-2 s1) (tree->list-2 s2)))
+
 #| Testing |# 
 (define s1 (list->tree (list 1 2 3)))
 (define s2 (list->tree (list 3 4 5)))
 
 (tree->list-2 s1)
-#| Answer |#
-(define (union-set-tree s1 s2)
-  (union-set (tree->list-2 s1) (tree->list-2 s2)))
+(tree->list-2 s2)
 
 (union-set-tree s1 s2)
+(intersection-set-tree s1 s2)
