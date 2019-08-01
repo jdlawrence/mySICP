@@ -49,10 +49,33 @@
         (else (error "bad bit: CHOOSE-BRANCH" bit))))
 (define sample-message '(0 1 1 0 0 1 0 1 0 1 1 1 0))
 
+(define (element-of-set? x set)
+  (cond ((null? set) false)
+        ((equal? x (car set)) true)
+        (else (element-of-set? x (cdr set)))))
+
+(define (adjoin-set x set)
+  (if (element-of-set? x set)
+      set
+      (cons x set)))
+
+(define (make-leaf-set pairs)
+  (if (null? pairs)
+      '()
+      (let ((pair (car pairs)))
+        (adjoin-set (make-leaf (car pair) ; symbol
+                               (cadr pair)) ; frequency
+                    (make-leaf-set (cdr pairs))))))
 #| Answer: |#
 (define (generate-huffman-tree pairs)
 (successive-merge (make-leaf-set pairs)))
 
+(define (successive-merge pairs)
+  (print "yes"))
 
 #| Testing |#
+(define l1 '((A 4) (B 2) (C 1) (D 1)))
+
+l1
+(make-leaf-set l1)
 
