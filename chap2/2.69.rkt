@@ -55,9 +55,10 @@
         (else (element-of-set? x (cdr set)))))
 
 (define (adjoin-set x set)
-  (if (element-of-set? x set)
-      set
-      (cons x set)))
+  (cond ((null? set) (list x))
+        ((< (weight x) (weight (car set))) (cons x set))
+        (else (cons (car set)
+                    (adjoin-set x (cdr set))))))
 
 (define (make-leaf-set pairs)
   (if (null? pairs)
@@ -70,12 +71,26 @@
 (define (generate-huffman-tree pairs)
 (successive-merge (make-leaf-set pairs)))
 
-(define (successive-merge pairs)
-  (print "yes"))
+(define (successive-merge set)
+      (cond ((null? set) '())
+            ((null? (cdr set)) (car set))
+            (else (successive-merge (adjoin-set (make-code-tree (car set) (cadr set)) (cddr set))))))
+
+(define (combine-first-two set)
+  (make-code-tree (car set) (cadr set)))
+
+(define (one-step set)
+  (adjoin-set (make-code-tree (car set) (cadr set)) (cddr set)))
 
 #| Testing |#
-(define l1 '((A 4) (B 2) (C 1) (D 1)))
+(define p1 '((A 4) (B 2) (C 1) (D 1)))
+(define l1 (make-leaf-set '((A 4) (B 2) (C 1) (D 1))))
 
 l1
-(make-leaf-set l1)
+(one-step l1)
+(one-step (one-step l1))
+(one-step (one-step (one-step l1)))
+;(successive-merge l1)
+(generate-huffman-tree p1)
+sample-tree
 
