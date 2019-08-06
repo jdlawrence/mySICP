@@ -67,7 +67,7 @@
         (adjoin-set (make-leaf (car pair) ; symbol
                                (cadr pair)) ; frequency
                     (make-leaf-set (cdr pairs))))))
-#| Answer: |#
+
 (define (generate-huffman-tree pairs)
 (successive-merge (make-leaf-set pairs)))
 
@@ -82,16 +82,41 @@
 (define (one-step set)
   (adjoin-set (make-code-tree (car set) (cadr set)) (cddr set)))
 
+
+
+(define (branch-contains symbol-list symbol)
+  (cond ((null? symbol-list) #f)
+        ((eq? (car symbol-list) symbol) #t)
+        (else (branch-contains (cdr symbol-list) symbol))))
+
+(branch-contains (symbols sample-tree) 'B)
+
+(define (encode-symbol symbol tree)
+  (if (leaf? tree)
+      '()
+      (cond ((branch-contains (symbols (left-branch tree)) symbol) (cons 0 (encode-symbol symbol (left-branch tree))))
+            ((branch-contains (symbols (right-branch tree)) symbol) (cons 1 (encode-symbol symbol (right-branch tree))))
+            (else (error "This tree doesn't contain this symbol")))))
+
+(define (encode message tree)
+  (if (null? message)
+      '()
+      (append (encode-symbol (car message) tree)
+              (encode (cdr message) tree))))
+
+
 #| Testing |#
 (define p1 '((A 4) (B 2) (C 1) (D 1)))
 (define l1 (make-leaf-set '((A 4) (B 2) (C 1) (D 1))))
-(define song '((NA 16) (YIP 9) (SHA 3) (GET 2) (A 2) (JOB 2) (WAH 1) (BOOM 1)))
+(define song '((na 16) (yip 9) (Sha 3) (Get 2) (a 2) (job 2) (Wah 1) (boom 1)))
 
-l1
-(one-step l1)
-(one-step (one-step l1))
-(one-step (one-step (one-step l1)))
-;(successive-merge l1)
-(generate-huffman-tree song)
-sample-tree
+#| Answer |#
+(length (encode
+         '(
+           Get a job
+               Sha na na na na na na na na
+               Wah yip yip yip yip yip yip yip yip yip
+               Sha boom) (generate-huffman-tree song)))
+
+#| 58 bits are required. If we had used the fixed length code, there would be 3 * 24 = 72 bits required.  |#
 
