@@ -115,8 +115,10 @@
          '(
            Get a job
                Sha na na na na na na na na
+               Get a job
+               Sha na na na na na na na na
                Wah yip yip yip yip yip yip yip yip yip
                Sha boom) (generate-huffman-tree song)))
 
-#| 58 bits are required. If we had used the fixed length code, there would be 3 * 24 = 72 bits required.  |#
+#| 84 bits are required. If we had used the fixed length code, there would be 3 * 36 = 108 bits required.  |#
 
