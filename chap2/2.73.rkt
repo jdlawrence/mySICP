@@ -6,13 +6,30 @@
 
 (define (sum? x) (and (pair? x) (eq? (car x) '+)))
 (define (product? x) (and (pair? x) (eq? (car x) '*)))
-(define (make-sum a1 a2) (list '+ a1 a2))
-(define (make-product m1 m2) (list '* m1 m2))
+;(define (make-sum a1 a2) (list '+ a1 a2))
+;(define (make-product m1 m2) (list '* m1 m2))
+(define (=number? exp num) (and (number? exp) (= exp num)))
+
+(define (make-sum a1 a2)
+  (cond ((=number? a1 0) a2)
+        ((=number? a2 0) a1)
+        ((and (number? a1) (number? a2))
+         (+ a1 a2))
+        (else (list '+ a1 a2))))
+
+(define (make-product m1 m2)
+  (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+        ((=number? m1 1) m2)
+        ((=number? m2 1) m1)
+        ((and (number? m1) (number? m2)) (* m1 m2))
+        (else (list '* m1 m2))))
+
 (define (addend s) (cadr s))
 (define (augend s) (caddr s))
 (define (multiplier p) (cadr p))
 (define (multiplicand p) (caddr p))
 
+#|
 (define (deriv exp var)
   (cond ((number? exp) 0)
         ((variable? exp)
@@ -29,8 +46,7 @@
                     (multiplicand exp))))
         ;⟨more rules can be added here⟩
         (else (error "unknown expression type: DERIV" exp))))
-
-#|
+|#
 (define (deriv exp var)
   (cond ((number? exp) 0)
         ((variable? exp) (if (same-variable? exp var) 1 0))
@@ -38,8 +54,14 @@
                (operands exp) var))))
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
-|#
 
+(put '+ (lambda (exp var) (make-sum
+                           (deriv (addend exp) var) (deriv (augend exp) var))))
+(put '* (lambda (exp var) (make-sum
+                           (make-product
+                            (multiplier exp) (deriv (multiplicand exp) var))
+                           (make-product
+                            (deriv (multiplier exp) var)  (multiplicand exp))))
 #| Answer:
 a) The derivatives rules for a sum and a product were taken out and replaced with an generic expression.
 The generic expression retrieves the appropriate derivative expression based on the operation tag, and then
@@ -47,6 +69,9 @@ calls the operations. We create two selectors, "operator" to choose the appropri
 and "operands" to get the expression that we which to carry out the derivative on.
 
 We cannot follow this pattern with "number" or "variable" because there are no operators used in those predicates.
+
+b)
 |#
 ;s(deriv '(+ (* 3 x) (* 4 x x)) 'x)
 (deriv '(* (* x y) (+ x 3)) 'x)
+(deriv '(* x y) 'y)
