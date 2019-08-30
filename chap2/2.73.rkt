@@ -55,9 +55,9 @@
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
 
-(put '+ (lambda (exp var) (make-sum
+(put '+ '(deriv) (lambda (exp var) (make-sum
                            (deriv (addend exp) var) (deriv (augend exp) var))))
-(put '* (lambda (exp var) (make-sum
+(put '* '(deriv) (lambda (exp var) (make-sum
                            (make-product
                             (multiplier exp) (deriv (multiplicand exp) var))
                            (make-product
@@ -71,6 +71,14 @@ and "operands" to get the expression that we which to carry out the derivative o
 We cannot follow this pattern with "number" or "variable" because there are no operators used in those predicates.
 
 b)
+(put '+ '(deriv) (lambda (exp var) (make-sum
+                           (deriv (addend exp) var) (deriv (augend exp) var))))
+(put '* '(deriv) (lambda (exp var) (make-sum
+                           (make-product
+                            (multiplier exp) (deriv (multiplicand exp) var))
+                           (make-product
+                            (deriv (multiplier exp) var)  (multiplicand exp))))
+c)
 |#
 ;s(deriv '(+ (* 3 x) (* 4 x x)) 'x)
 (deriv '(* (* x y) (+ x 3)) 'x)
