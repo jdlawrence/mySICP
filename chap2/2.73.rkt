@@ -50,18 +50,22 @@
 (define (deriv exp var)
   (cond ((number? exp) 0)
         ((variable? exp) (if (same-variable? exp var) 1 0))
+        ((get (operator exp) 'deriv) (operands exp) var)
         (else ((get 'deriv (operator exp))
                (operands exp) var))))
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
 
-(put '+ '(deriv) (lambda (exp var) (make-sum
+(put '(deriv) '+ (lambda (exp var) (make-sum
                            (deriv (addend exp) var) (deriv (augend exp) var))))
-(put '* '(deriv) (lambda (exp var) (make-sum
+(put '(deriv) '* (lambda (exp var) (make-sum
                            (make-product
                             (multiplier exp) (deriv (multiplicand exp) var))
                            (make-product
                             (deriv (multiplier exp) var)  (multiplicand exp))))
+(put 'exponentiation (deriv) (lambda (exp var)  (make-product
+                                                 (make-product (exponent exp) (make-exponent (base exp) (make-sum (exponent exp) -1))))
+                                                 (deriv (base exp) var)))
 #| Answer:
 a) The derivatives rules for a sum and a product were taken out and replaced with an generic expression.
 The generic expression retrieves the appropriate derivative expression based on the operation tag, and then
@@ -78,7 +82,13 @@ b)
                             (multiplier exp) (deriv (multiplicand exp) var))
                            (make-product
                             (deriv (multiplier exp) var)  (multiplicand exp))))
-c)
+c) (put 'exponentiation (deriv) (lambda (exp var)  (make-product
+                                                 (make-product (exponent exp) (make-exponent (base exp) (make-sum (exponent exp) -1))))
+                                                 (deriv (base exp) var)))
+d) If we changed the dispatch line to ((get (operator exp) 'deriv) (operands exp) var), we could just switch the order of the operation
+and the 'deriv tag in the table, ie
+(put '+ '(deriv) (lambda (exp var) (make-sum
+                           (deriv (addend exp) var) (deriv (augend exp) var))))
 |#
 ;s(deriv '(+ (* 3 x) (* 4 x x)) 'x)
 (deriv '(* (* x y) (+ x 3)) 'x)
