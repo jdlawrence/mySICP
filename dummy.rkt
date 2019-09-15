@@ -27,3 +27,16 @@
 (equal? 'jamil 'jamil)
 (equal? 'jamil 'kyle)
 (null? '())
+
+(define (cons x y)
+  (define (dispatch m)
+    (cond ((= m 0) x)
+          ((= m 1) y)
+          (else (error "Argument not 0 or 1: CONS" m))))
+  dispatch)
+
+(define (car z) (z 0))
+(define (cdr z) (z 1))
+
+(car (cons 3 4))
+(cdr (cons 3 4))
