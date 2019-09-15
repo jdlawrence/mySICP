@@ -19,16 +19,24 @@ if we are using the scheme-number, rational, or complex packages. Once we have s
 package, we can use functions inside of it, like real-part, imag-part, etc.
 
 When the expression (magnitude z) is called with the expression in 2.24,
-('complex 'rectangular 3 + 4i)
+(define z (make-complex-from-real-imag 3 4))
 
-we first call (apply-generic 'magnitude z). Inside apply-generic, we have (map type-tag args). This
-returns a list of tags, (list 'complex 'rectangular).  This will use "get" to look up a procedure that
-corresponds with the tags, which will be
+we first call (apply-generic 'magnitude z). Inside apply-generic, we have (map type-tag args).
+This applies the 'complex tag to the z argument.
+We also have (get op type-tags), which is (get 'magnitude (complex))
+Inside apply-generic is (apply proc (map contents args)) which simplifies to:
+(apply (get 'magnitude (complex)) ('rectangular 3 4)))
+
+(get 'magnitude complex) returns a magnitude function from the rectangular package, and the process
+ begins once again. Inside the 'rectangular package, magnitude will eventually return:
+
 (sqrt (+ (square (real-part z))
   (square (imag-part z)))))
 
-This will calculate use the complex package, rectangular definition of the magnitude function.
-Apply-generic will only be called once.
+
+This will evaluate the magnitude of z in rectangular, which will be 5.
+
+Apply-generic is called twice, once for the complex tag, and once for the rectangular tag.
 
 
 |#
