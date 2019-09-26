@@ -26,4 +26,8 @@ is no procedure, we will get an infinite loop with the current apply-generic. Th
 we won't find the procedure, and we will always have have a successful coercision, which
 recursively calls apply-generic again.
 
-b)
+b) Louis Reasoner is wrong that something needs to change about apply-generic. If we don't change apply-
+generic currently, we will just get "No method for these types", which is true.
+
+c) No alteration necessary
+|#
