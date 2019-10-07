@@ -17,5 +17,28 @@ can we coerce all types.
 
 |#
 (append (list 1 2 3) (list 4 5 6))
-;(define (coerce-all a-list type)
-;  (if (
+
+#| Run a test for every time
+Run a test for every element in a list
+Return true if every element passes or false otherwise
+|#
+
+(define (every elements test)
+  (cond ((null? elements) #t)
+        ((not (test (car elements))) #f)
+        (else (every (cdr elements) test))))
+
+(define (some elements test)
+  (cond ((null? elements) #t)
+        ((test (car elements)) #t)
+        (else (every (cdr elements) test))))
+
+(define (coerce-all a-type elements)
+  (if (every elements (lambda (element) (get-coercion a-type (type-tag element))))
+      
+#| Testing |#
+(define (greater-than-zero x)
+  (> x 0))
+
+(every (list -11 2 3) greater-than-zero)
+(some (list -11 -22 -23) greater-than-zero)
