@@ -33,10 +33,12 @@
 ((a1 'withdraw) 1750)
 
 #| Answer |#
+#| NOTE: we could have used "begin" but we  only need it if we we're
+using an "if" statement |#
 (define (make-accumulator init)
   (lambda (amount)
-    (begin (set! init (+ init amount))
-           init)))
+    (set! init (+ init amount))
+           init))
 
 (define A (make-accumulator 5))
 (A 5)
