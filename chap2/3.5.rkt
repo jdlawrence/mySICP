@@ -7,7 +7,7 @@
   (* n n))
 
 (define (inside-circle cx cy r x1 y1)
-  (< (+ (square (- cx x1)) (square (- cy y1)))
+  (<= (+ (square (- cx x1)) (square (- cy y1)))
       (square r)))
   
 (define (predicate cx cy r x1 x2 y1 y2)
