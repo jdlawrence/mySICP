@@ -6,7 +6,17 @@
          (count-pairs (cdr x))
          1)))
 
-;(define ex (list 'a 'b 'c 'd))
-(define ex (list 'a 'b))
+#| Answer:
+Ben Biddlecome's answer doesn't account for nested structures
+|#
 
-(count-pairs ex)
+#| Testing |#
+;(define ex (list 'a 'b 'c 'd))
+(define ex1 (list 'a 'b))
+(define ex2 (list 'a (list (list (list 'b)))))
+(define ex3 (list 'a (list 'b) (list 'c)))
+
+(count-pairs ex1)
+(count-pairs ex2)
+(count-pairs ex3)
+
