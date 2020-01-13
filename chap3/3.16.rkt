@@ -8,31 +8,18 @@
 
 #| Answer:
 Ben Biddlecome's answer doesn't account for nested structures
+where the car and cdr point to the same pair
 |#
 
 #| Testing |#
-;(define ex (list 'a 'b 'c 'd))
-(define ex1 (list 'a 'b))
-(define ex2 (list (list 'a) 'a))
-(define ex3 (list 'a (list 'b) (list 'c)))
-
-
-
-(car ex2)
-(cdr ex2)
-(count-pairs ex1)
-(count-pairs ex2)
-(count-pairs ex3)
-
-(define x (list 'a 'b))
-(define z1 (cons x x))
-(define z2 (list x x))
-
-(car z1)
-(cdr z1)
-(car z2)
-(cadr z2)
-(cons 1 (cons 2 3))
-
-(cons 1 2)
-'(1 . 2)
+(define 1-pair (cons 'a 'b))
+(define intermediate-2 (cons 1-pair 1-pair))
+(define 3-pair-three (cons 'a (cons 'b (cons 'c '()))))
+(define 4-pair-three (cons 'a (cons 1-pair 1-pair)))
+(define 7-pair-three (cons intermediate intermediate))
+                                                   
+(count-pairs 1-pair)
+(count-pairs intermediate)
+(count-pairs 3-pair-three)
+(count-pairs 4-pair-three)
+(count-pairs 7-pair-three)
