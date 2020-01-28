@@ -27,7 +27,6 @@
                (helper (cdr x)) 
                1)))) 
     (helper x)))
-(eq? (cdr (cons 'a '())) '())
 
 (define (cycle? a-list)
   (let ((visited null))
@@ -39,9 +38,23 @@
                (set! visited (mcons (mcar x) visited))
                (sub (mcdr x))))))
       (sub a-list)))
+#| Due to the provided nature of how Racket implements a circular list
+I cannot test these solutions. I tried to import mutable pairs, etc, but
+still cannot test. I believe both my solution above and one I found online
+below are applicable.
+|#
+
+(define (has-loop? lis) 
+  (define (iter searchlist seen) 
+    (cond ((not (pair? searchlist)) #f) 
+          ((memq searchlist seen) #t) 
+          (else (or (iter (car searchlist) (cons searchlist seen)) 
+                    (iter (cdr searchlist) (cons searchlist seen)))))) 
+  (iter lis '())) 
 
 (cycle? z)
 (cycle? def)
+(has-loop? def)
   
 
 
