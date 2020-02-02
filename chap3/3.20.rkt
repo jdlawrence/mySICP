@@ -41,8 +41,10 @@
 q1
 (insert-queue! q1 'a)
 (insert-queue! q1 'b)
-(delete-queue! q1)
-(delete-queue! q1)
+(insert-queue! q1 'c)
+(insert-queue! q1 'd)
+;(delete-queue! q1)
+;(delete-queue! q1)
 (empty-queue? q1)
 
 #| Answer:
@@ -60,9 +62,18 @@ After the first delete, the front and rear both point to 'b
 After the second delete, the front points to null, and the rear points to be. This is the
 way the delete queue was designed. You can tell that the list is empty because
 empty-queue?, which just checks if the front is null, returns true.
-
-
 |#
+
+(define (print-queue q)
+  (cond ((empty-queue? q)  "")
+        (else (display (front-queue q)) (display " -> ") (print-queue (cons (cdr (front-ptr q)) (rear-ptr q))))))
+
+
+(print-queue q1)
+(delete-queue! q1)
+(print-queue q1)
+(insert-queue! q1 'j)
+(print-queue q1)
 
 
 
