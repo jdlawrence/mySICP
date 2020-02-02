@@ -1,24 +1,28 @@
 #lang sicp
 
-(define (last-pair x)
-  (if (null? (cdr x)) x (last-pair (cdr x))))
+(define (cons x y)
+  (define (set-x! v) (set! x v))
+  (define (set-y! v) (set! y v))
+  (define (dispatch m)
+    (cond ((eq? m 'car) x)
+          ((eq? m 'cdr) y)
+          ((eq? m 'set-car!) set-x!)
+          ((eq? m 'set-cdr!) set-y!)
+          (else
+           (error "Undefined operation: CONS" m))))
+  dispatch)
+(define (car z) (z 'car))
+(define (cdr z) (z 'cdr))
+(define (set-car! z new-value)
+  ((z 'set-car!) new-value) z)
+(define (set-cdr! z new-value)
+  ((z 'set-cdr!) new-value) z)
 
-(define (make-cycle x)
-  (set-cdr! (last-pair x) x)
-  x)
+(define acon (cons 1 2))
 
-;(define abc (list 'a 'b 'c))
-(define abc '(a b c))
-(define def (cons 'd (cons 'e (cons 'f '()))))
-;(define z (make-cycle abc))
+(car (set-car! acon 8))
+(cdr (set-car! acon 8))
 
-;(cons 'a (cons 'b (cons 'c '())))
-;(list 'a 'b 'c)
-(memq 'a abc)
-(memq 'd def)
-(memq 'h def)
-;(define (cycle? a-list)
-  
 
 
 
