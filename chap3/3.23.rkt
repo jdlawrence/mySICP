@@ -44,6 +44,6 @@
 (empty-queue? q)
 (insert-queue! q 8)
 (front-queue q)
-;(insert-queue! q 9)
+(insert-queue! q 9)
 ;(delete-queue! q)
 ;(front-queue q)
