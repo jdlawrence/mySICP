@@ -1,27 +1,12 @@
 #lang sicp
 
-(define (cons x y)
-  (define (set-x! v) (set! x v))
-  (define (set-y! v) (set! y v))
-  (define (dispatch m)
-    (cond ((eq? m 'car) x)
-          ((eq? m 'cdr) y)
-          ((eq? m 'set-car!) set-x!)
-          ((eq? m 'set-cdr!) set-y!)
-          (else
-           (error "Undefined operation: CONS" m))))
-  dispatch)
-(define (car z) (z 'car))
-(define (cdr z) (z 'cdr))
-(define (set-car! z new-value)
-  ((z 'set-car!) new-value) z)
-(define (set-cdr! z new-value)
-  ((z 'set-cdr!) new-value) z)
+(define l (cons 1 (cons 2 (cons 3 (cons 4 '())))))
 
-(define acon (cons 1 2))
 
-(car (set-car! acon 8))
-(cdr (set-car! acon 8))
+l
+(car l)
+(cdr l)
+(cdar (cdr l))
 
 
 

@@ -29,6 +29,7 @@
       (cond
         ((eq? m 'empty-queue?) (empty-queue?))
         ((eq? m 'front-queue) (front-queue))
+        ((eq? m 'rear-queue) (rear-queue))
         ((eq? m 'insert-queue!) insert-queue!)
         ((eq? m 'delete-queue!) (delete-queue!))
         (else
@@ -36,6 +37,7 @@
     dispatch))
 (define (empty-queue? q) (q 'empty-queue?))
 (define (front-queue q) (q 'front-queue))
+(define (rear-queue q) (q 'rear-queue))
 (define (insert-queue! q v) ((q 'insert-queue!) v))
 (define (delete-queue! q) (q 'delete-queue!))
 
