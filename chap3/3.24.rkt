@@ -1,20 +1,24 @@
 #lang sicp
 (define (make-table same-key?)
   (let ((local-table (list '*table*)))
+    (define (assoc key records)
+      (cond ((null? records) false)
+            ((same-key? key (caar records)) (car records))
+            (else (assoc key (cdr records)))))
     (define (lookup key-1 key-2)
       (let ((subtable
-             (same-key? key-1 (cdr local-table))))
+             (assoc  key-1 (cdr local-table))))
         (if subtable
             (let ((record
-                   (same-key? key-2 (cdr subtable))))
+                   (assoc key-2 (cdr subtable))))
               (if record (cdr record) false))
             false)))
     (define (insert! key-1 key-2 value)
       (let ((subtable
-             (same-key? key-1 (cdr local-table))))
+             (assoc key-1 (cdr local-table))))
         (if subtable
             (let ((record
-                   (same-key? key-2 (cdr subtable))))
+                   (assoc key-2 (cdr subtable))))
               (if record
                   (set-cdr! record value)
                   (set-cdr! subtable
@@ -36,4 +40,5 @@
 (define put (t 'insert-proc!))
 
 (put 's1 'a 5)
+(get 's1 'a)
 (get 's1 'b)
