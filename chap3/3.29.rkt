@@ -18,11 +18,14 @@
           (new-value  (logical-not and-output))
           )
       (after-delay
-       (+ (* 3 inverter-delay) and-gate-delay)
+       (+ (* 2 inverter-delay) and-gate-delay)
        (lambda () (set-signal! output new-value)))))
   (add-action! o1 or-action-procedure)
   (add-action! o2 or-action-procedure)
   'ok)
+
+#| NOTE: We only need 2 inverter delays because the initial inversion of the two
+inputs happens in parallel |#
 
 #| More concise version below that uses prior definitions |#
 
