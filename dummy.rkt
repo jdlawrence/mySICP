@@ -41,3 +41,12 @@
 (get 'a 'b)
 (put 'a 'c 7)
 (get 'a 'b)
+
+(define j (cons 'a 'b))
+
+j
+(define (change-cdr ap)
+  (set-cdr! ap 3))
+
+(change-cdr j)
+j
