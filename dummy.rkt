@@ -50,3 +50,4 @@ j
 
 (change-cdr j)
 j
+(sqrt 4)
