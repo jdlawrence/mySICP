@@ -197,7 +197,7 @@
 (define (c/ x y)
   (let (
         (z (make-connector))
-        (inver
+        (invert3
         )
     (multiplier x (/ 1 (get-value y)) z)
     z))
