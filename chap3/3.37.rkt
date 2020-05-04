@@ -205,3 +205,23 @@
 
 (set-value! F 9104. 'user)
 
+#| NOTE: A much more clever solution, instead of defining a "divider" constraint,
+is to reuse the multiplier constraint in a clever way.
+
+In an equation involving a quotient, ie
+
+x / y = z,
+
+we can solve for x to get:
+
+x = y * z
+
+Therefore we can specify the divider constraint as 
+
+(define (c/ x y)
+  (let ((z (make-connector)))
+    (multiplier y z x) 
+    z))
+
+|#
+
