@@ -136,45 +136,30 @@
   (connect product me)
   me)
 
-#|
 (define (divider d1 d2 quotient)
   (define (process-new-value)
-    (cond ((= (get-value d2 0)
+    (cond ((and (has-value? d2) (= (get-value d2) 0))
            (error "Cannot divide by 0"))
-          ((= d1 0) (set-value! product 0 me))
-          
-      ((or (and (has-value? m1) (= (get-value m1) 0))
-               (and (has-value? m2) (= (get-value m2) 0)))
-           (set-value! product 0 me))
-          ((and (has-value? m1) (has-value? m2))
-           (set-value! product
-                       (* (get-value m1) (get-value m2))
-                       me))
-          ((and (has-value? product) (has-value? m1))
-           (set-value! m2
-                       (/ (get-value product)
-                          (get-value m1))
-                       me))
-          ((and (has-value? product) (has-value? m2))
-           (set-value! m1
-                       (/ (get-value product)
-                          (get-value m2))
-                       me))))
+          ((and (has-value? d1) (= (get-value d1) 0)) (set-value! quotient 0 me))
+          ((and (has-value? quotient) (= (get-value quotient) 0)) (set-value! d1 0 me))
+          ((and (has-value? d1) (has-value? d2)) (set-value! quotient (/ (get-value d1) (get-value d2)) me))
+          ((and (has-value? d1) (has-value? quotient)) (set-value! d2 (/ (get-value d1) (get-value quotient)) me))
+          ((and (has-value? d2) (has-value? quotient)) (set-value! d1 (* (get-value d2) (get-value quotient)) me))))
   (define (process-forget-value)
-    (forget-value! product me)
-    (forget-value! m1 me)
-    (forget-value! m2 me)
+    (forget-value! quotient me)
+    (forget-value! d1 me)
+    (forget-value! d2 me)
     (process-new-value))
   (define (me request)
     (cond ((eq? request 'I-have-a-value) (process-new-value))
           ((eq? request 'I-lost-my-value) (process-forget-value))
           (else (error "Unknown request: MULTIPLIER"
                        request))))
-  (connect m1 me)
-  (connect m2 me)
-  (connect product me)
+  (connect d1 me)
+  (connect d2 me)
+  (connect quotient me)
   me)
-|#
+
 
 (define (constant value connector)
   (define (me request)
@@ -195,11 +180,8 @@
     z))
 
 (define (c/ x y)
-  (let (
-        (z (make-connector))
-        (invert3
-        )
-    (multiplier x (/ 1 (get-value y)) z)
+  (let ((z (make-connector)))
+    (divider x y z)
     z))
 
 (define (cv x)
@@ -221,5 +203,5 @@
 (probe "C" C)
 (probe "F" F)
 
-(set-value! F 36 'user)
+(set-value! F 9104. 'user)
 
