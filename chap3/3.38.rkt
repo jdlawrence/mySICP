@@ -21,3 +21,6 @@ Starting with $100:
 (Mary, Peter, Paul) = $40
 (Mary, Paul, Peter) = $40
 |#
+
+#| Part b: See .jpg file for diagram. Possible values are $110, $80, and $50 |#
+
