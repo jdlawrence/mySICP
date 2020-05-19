@@ -1,50 +1,5 @@
 #lang sicp
 
-#| Answer
-Can a semaphore be a list of mutexes?
-
-
-|#
-
-(define (make-stack)
-  (define my-stack (cons 1 (cons 2 '())))
-
-  (define (pop)
-    (define (pop-helper a-stack)
-      (let ((result (car  a-stack)))
-      (set!  my-stack (cdr  a-stack))
-      result))
-    (pop-helper  my-stack))
-
-  (define (push x)
-    (define (push-helper x  a-stack)
-      (set!  my-stack (cons x  a-stack)))
-    (push-helper x  my-stack))
-  (define (empty?)
-    (define (empty-helper  a-stack)
-      (if (null? a-stack) #t
-          #f))
-    (empty-helper my-stack))
-  (define (print)
-    (define (print-helper  a-stack)
-      (if (empty?) '()
-          (display a-stack)))
-    (print-helper  my-stack))
-
-  (define (dispatch method)
-    (cond 
-      ((eq? method 'pop) pop)
-      ((eq? method 'push) push)
-      ((eq? method 'print) print)
-      (else (lambda() (display "Unknown Request: ")(display method)(newline)))))
-  dispatch)
-
-(define s (make-stack))
-s
-
-((s 'push) 3)
-((s 'print))
-
 (define (make-mutex)
   (let ((cell (list false)))
     (define (the-mutex m)
@@ -107,12 +62,12 @@ s
                  (begin
                    (clear! lock)
                    (dispatch 'acquire))))
-             ; If release is called, assuming count is greater than 0 and we have mutexes to release,
-             ; decrease the count with an 'acquire and 'release 
+            ; Check first that count is greater than 0 and check if we're busy. If so, keep
+            ; trying to release. If not, decrease the count with an 'acquire and 'release 
             ((eq? m 'release)
-             (if (> count 0)
-                 (lock 'acquire)
+             (if (or (= count 0) (test-and-set! lock))
+                 dispatch 'release
                  (begin
                    (set! count (- count 1))
-                   (lock 'release))))))
+                   (clear! lock))))))
     dispatch))
