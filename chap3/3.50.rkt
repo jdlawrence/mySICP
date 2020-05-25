@@ -11,12 +11,11 @@
 (1 4 9 16)
 
 #| Answer |#
-; How do you tell if a stream is null?
 
 (define (stream-map proc . argstreams)
   (if (stream-null? (car argstreams))
       the-empty-stream
-      (begin
-       (apply proc (map proc argstreams))
+      (cons-stream
+       (apply proc (map stream-car argstreams))
        (apply stream-map
-              (cons proc (map proc argstreams))))))
+              (cons proc (map stream-cdr argstreams))))))
