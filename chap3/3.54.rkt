@@ -17,11 +17,21 @@
       (stream-car s)
       (stream-ref (stream-cdr s) (- n 1))))
 
+#|
 (define (stream-map proc s)
   (if (stream-null? s)
       the-empty-stream
       (cons-stream (proc (stream-car s))
                    (stream-map proc (stream-cdr s)))))
+|#
+
+(define (stream-map proc . argstreams)
+  (if (stream-null? (car argstreams))
+      the-empty-stream
+      (cons-stream
+       (apply proc (map stream-car argstreams))
+       (apply stream-map
+              (cons proc (map stream-cdr argstreams))))))
 
 (define (stream-for-each proc s)
   (if (stream-null? s)
@@ -52,6 +62,13 @@
                        (stream-cdr stream))))
         (else (stream-filter pred (stream-cdr stream)))))
 
+(define ones (cons-stream 1 ones))
+
+(define (add-streams s1 s2) (stream-map + s1 s2))
+
+(define integers
+(cons-stream 1 (add-streams ones integers)))
+
 #| Answer:
 |#
 
@@ -60,5 +77,13 @@
 
 (define factorials
   (cons-stream 1 (mul-streams factorials (stream-cdr integers))))
+
+#| Testing |#
+(stream-ref factorials 0)
+(stream-ref factorials 1)
+(stream-ref factorials 2)
+(stream-ref factorials 3)
+(stream-ref factorials 4)
+(stream-ref factorials 5)
 
 
