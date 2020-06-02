@@ -78,19 +78,27 @@
   (cons-stream 1 (mul-streams factorials (stream-cdr integers))))
 
 #| Answer |#
+#|
 (define (partial-sums s)
   (define (sub ss sum)
     (cons-stream (+ sum (stream-car s)) (sub (stream-cdr ss) (+ sum (stream-car ss)))))
   (sub s -1))
+|#
+
+#| More concise solution |#
+ (define (partial-sums s) 
+   (add-streams s (cons-stream 0 (partial-sums s)))) 
+
+  
 
   
 #| Testing |#
 (define ex (partial-sums integers))
-(stream-ref ex 0)
-(stream-ref ex 1)
-(stream-ref ex 2)
-(stream-ref ex 3)
-(stream-ref ex 4)
+;(stream-ref ex 0)
+;(stream-ref ex 1)
+;(stream-ref ex 2)
+;(stream-ref ex 3)
+;(stream-ref ex 4)
 (stream-ref ex 5)
 (stream-ref ex 6)
 (stream-ref ex 7)
