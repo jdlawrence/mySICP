@@ -89,20 +89,20 @@
  (define (partial-sums s) 
    (add-streams s (cons-stream 0 (partial-sums s)))) 
 
-  
-
-  
+;(map stream-car ones integers)
+;(define j (stream-map (lambda (x y z ) (* 1 x y z)) (add-streams integers integers) (add-streams integers integers) integers))
+(define j (stream-map (lambda (x y) (* 3 x y)) integers (add-streams integers integers)))
+;(stream-ref j 0)
+(stream-ref integers 2)
+;(stream-ref j 4)
 #| Testing |#
 (define ex (partial-sums integers))
 ;(stream-ref ex 0)
 ;(stream-ref ex 1)
-;(stream-ref ex 2)
+(stream-ref ex 2)
 ;(stream-ref ex 3)
 ;(stream-ref ex 4)
-(stream-ref ex 5)
-(stream-ref ex 6)
-(stream-ref ex 7)
-(stream-ref ex 8)
+;(stream-ref ex 5)
 #|
 (stream-ref factorials 0)
 (stream-ref factorials 1)
