@@ -87,48 +87,14 @@
                    s1car
                    (merge (stream-cdr s1)
                           (stream-cdr s2)))))))))
+(define fibs
+  (cons-stream
+   0
+   (cons-stream 1 (add-streams (stream-cdr fibs) fibs))))
 
-#| Answer |#
-(define j (cons-stream 1 (scale-stream j 2)))
-(define hm (cons-stream 1 (merge (scale-stream hm 2) (scale-stream hm 3))))
-
-#| Final answer |#
-(define S (cons-stream 1 (merge (merge
-                          (scale-stream S 2)
-                          (scale-stream S 3))
-                       (scale-stream S 5))))
-
-#| Testing |#
-(define negative-ones (cons-stream -1 negative-ones))
-(define evens (cons-stream 0 (scale-stream integers 2)))
-(define odds (add-streams (scale-stream integers 2) negative-ones))
-(define all (merge odds evens))
-
-(stream-ref hm 1)
-(stream-ref hm 2)
-(stream-ref hm 3)
-(stream-ref hm 4)
-(stream-ref hm 5)
-(stream-ref hm 6)
-(stream-ref hm 7)
-(stream-ref hm 8)
-(stream-ref hm 9)
-(stream-ref hm 10)
-(stream-ref hm 11)
-(stream-ref hm 12)
-(stream-ref j 1)
-(stream-ref j 2)
-(stream-ref j 3)
-(stream-ref j 4)
-(stream-ref j 5)
-(stream-ref j 6)
-(stream-ref S 1)
-(stream-ref S 2)
-(stream-ref S 3)
-(stream-ref S 4)
-(stream-ref S 5)
-(stream-ref S 6)
-(stream-ref S 7)
-(stream-ref S 8)
-(stream-ref S 9)
-(stream-ref S 10)
+(stream-ref fibs 3)
+#| Answer:
+With the current implementation, to calculate the nth Fibonacci number we call add-streams
+n - 2 times. If we didn't have this, we have to count from n-2, n-3, n-4, etc all the way down
+to 0 for each time we called fibonacci. This would be on the order of n^2.
+|#
