@@ -91,6 +91,8 @@
 #| Answer |#
 (define j (cons-stream 1 (scale-stream j 2)))
 (define hm (cons-stream 1 (merge (scale-stream hm 2) (scale-stream hm 3))))
+
+#| Final answer |#
 (define S (cons-stream 1 (merge (merge
                           (scale-stream S 2)
                           (scale-stream S 3))
