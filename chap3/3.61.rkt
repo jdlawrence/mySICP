@@ -100,13 +100,3 @@ http://mathonline.wikidot.com/the-cauchy-product-of-two-series-of-real-numbers
 (define (invert-unit-series s)
   (cons-stream 1 (scale-stream (mul-series (stream-cdr s) (invert-unit-series s)) -1)))
 
-#| Testing |#
-;(define ex (integrate-series integers))
-(define ex (integrate-series ones))
-
-
-(stream-ref test 0)
-(stream-ref test 1)
-(stream-ref test 2)
-(stream-ref test 3)
-(stream-ref test 4)
