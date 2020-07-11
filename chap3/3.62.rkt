@@ -101,22 +101,25 @@ http://mathonline.wikidot.com/the-cauchy-product-of-two-series-of-real-numbers
   (cons-stream 1 (scale-stream (mul-series (stream-cdr s) (invert-unit-series s)) -1)))
 
 (define (div-series s1 s2)
-  (mul-series s1 (invert-unit-series s2)))
+  (if (= (stream-car s2) 0)
+      (error "cannot divide by zero")
+      (mul-series s1 (invert-unit-series s2))))
 
-#| Testing |#
-(define tangent-series (div-series sine-series cosine-series))
+  #| Testing |#
+  (define tangent-series (div-series sine-series cosine-series))
 
-(stream-ref tangent-series 0)
-(stream-ref tangent-series 1)
-(stream-ref tangent-series 2)
-(stream-ref tangent-series 3)
-(stream-ref tangent-series 4)
-(stream-ref tangent-series 5)
-(stream-ref tangent-series 6)
-(stream-ref tangent-series 7)
-(stream-ref tangent-series 8)
-(stream-ref tangent-series 9)
-(stream-ref tangent-series 10)
-(stream-ref tangent-series 11)
-(stream-ref tangent-series 12)
+  (stream-ref tangent-series 0)
+  (stream-ref tangent-series 1)
+  (stream-ref tangent-series 2)
+  (stream-ref tangent-series 3)
+  (stream-ref tangent-series 4)
+  (stream-ref tangent-series 5)
+  (stream-ref tangent-series 6)
+  (stream-ref tangent-series 7)
+  (stream-ref tangent-series 8)
+  (stream-ref tangent-series 9)
+  (stream-ref tangent-series 10)
+  (stream-ref tangent-series 11)
+  (stream-ref tangent-series 12)
 
+  
