@@ -101,7 +101,6 @@
 (define (sqrt-improve guess x)
 (average guess (/ x guess)))
 
-#| Original definition |#
 (define (sqrt-stream-o x)
   (define guesses
     (cons-stream
@@ -110,21 +109,14 @@
                  guesses)))
   guesses)
 
-#| Louis Reasoner definition |#
 
-(define (sqrt-stream x)
-  (cons-stream 1.0 (stream-map
-                    (lambda (guess)
-                      (sqrt-improve guess x))
-                   (sqrt-stream x))))
+(define (stream-limit s1 tolerance)
+  #| Something like this: |#
+  (if (> tolerance (abs (- (stream-car s1) (stream-car (stream-cdr s1)))))
+      (stream-car (stream-cdr s1))
+      (stream-limit (stream-cdr s1) tolerance)))
+      
 
-
-#| Answer:
-Though these appear to be the same, I'm sure Alyssa P. Hacker's version has reason to be better, otherwise
-the authors wouldn't have asked the question.
-
-If delay didn't use (lambda () <exp>), they would be the same.
-|#
 
 #| Testing |#
 (stream-ref (sqrt-stream 32) 0)
