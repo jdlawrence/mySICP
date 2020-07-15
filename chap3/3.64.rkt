@@ -99,9 +99,9 @@
 
 #| Square root iterative function |#
 (define (sqrt-improve guess x)
-(average guess (/ x guess)))
+  (average guess (/ x guess)))
 
-(define (sqrt-stream-o x)
+(define (sqrt-stream x)
   (define guesses
     (cons-stream
      1.0
@@ -109,16 +109,21 @@
                  guesses)))
   guesses)
 
-
 (define (stream-limit s1 tolerance)
   #| Something like this: |#
   (if (> tolerance (abs (- (stream-car s1) (stream-car (stream-cdr s1)))))
       (stream-car (stream-cdr s1))
       (stream-limit (stream-cdr s1) tolerance)))
-      
+
+(define (sqrt x tolerance)
+  (stream-limit (sqrt-stream x) tolerance))
 
 
 #| Testing |#
+(sqrt 32 0.001)
 (stream-ref (sqrt-stream 32) 0)
 (stream-ref (sqrt-stream 32) 1)
-(stream-ref (sqrt-stream-o 32) 1)
+(stream-ref (sqrt-stream 32) 2)
+(stream-ref (sqrt-stream 32) 3)
+(stream-ref (sqrt-stream 32) 4)
+(stream-ref (sqrt-stream 32) 5)
