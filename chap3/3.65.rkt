@@ -117,9 +117,28 @@
     (if (= count n)
         (stream-ref s count)
         (begin
-          (stream-ref s count)
+          (display (stream-ref s count))
+          (display "\n")
           (sub (+ count 1)))))
   (sub 0))
+
+(define (square x) (* x x))
+
+(define (euler-transform s)
+  (let ((s0 (stream-ref s 0)) ; Sn-1
+        (s1 (stream-ref s 1)) ; Sn
+        (s2 (stream-ref s 2))) ; Sn+1
+    (cons-stream (- s2 (/ (square (- s2 s1))
+                          (+ s0 (* -2 s1) s2)))
+                 (euler-transform (stream-cdr s)))))
+
+(define (make-tableau transform s)
+(cons-stream s (make-tableau transform (transform s))))
+
+(define (accelerated-sequence transform s)
+(stream-map stream-car (make-tableau transform s)))
+
+
 #| Answer |#
 #| This summands stream converges VERY slowly |#
 (define (ln-summands n)
@@ -129,10 +148,18 @@
 (define ln-stream
   (partial-sums (ln-summands 1)))
 
+#| The Euler transform is much faster |#
+(define ln-stream-2
+  (euler-transform ln-stream))
 
+#| This is by far the fastest |#
+(define ln-stream-3
+  (accelerated-sequence euler-transform ln-stream))
 
 #| Testing |#
 (display-n-terms ln-stream 10)
+(display-n-terms ln-stream-2 10)
+(display-n-terms ln-stream-3 10)
 #|
 (stream-ref ln-stream 0)
 (stream-ref ln-stream 1)
