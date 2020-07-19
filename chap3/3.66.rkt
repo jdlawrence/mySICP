@@ -169,12 +169,19 @@ The 4s parirs, ie, (4,5), (4, 6), (4,7), etc, start with (4,4) as the 15th eleme
 occurring at every 16th element after this.
 
 So a pattern, the first element, for a matching pair (n,n), ie (1,1), (2,2), (3,3), etc will occur as the 2^n - 1 element.
-The pair (n, n+1) will follow 2^(n-1) elements later, or 2^n + 2^(n-1) - 1 element.
+The next pair (n, n+1) will follow 2^(n-1) elements later, or 2^n + 2^(n-1) - 1 element. Subsequent elements with be every 2^n from the
+second pair.
 
 Final answers:
 (1, 100) is the 198th pair, 197 pairs precede it
 (99, 100) is the 2^99 + 2^98 - 1 pair, and 2^99 + 2^98 - 2 pairs precede it
 (100, 100) is the 2^100 - 1 pair, and 2^100 - 2 pairs precede it.
+
+Formulas:
+Given (m, n), if
+n-m = 0, (m, n) is the 2^n - 1 pair
+n-m = 1, (m, n) is the 2^n + 2^(n-1) - 1 pair
+n-m > 1, (m, n) is the 2^n + 2^(n-1) + (n - m - 1)*2^n - 1 pair
 
 |#
 
