@@ -162,7 +162,12 @@
    (pairs (stream-cdr s) (stream-cdr t))))
 
 #| Answer:
-This seems valid. However it runs out of memory. This is because 
+This seems valid. However it runs out of memory. This is because in Louis's version, interleave
+calls "pairs" as its second argument. This must be evaluated, and it will call interleave, which
+will call pairs, and so on. In the original version, interleave is the second argument to cons-stream
+which called with delay, which allows the argument itself to be evaluated later. Delay is an
+exception to Scheme's traditional use of Applicative-order evaluation, where in this case it uses
+Normal-order evaluation. 
 |#
 
 #| Testing |#
