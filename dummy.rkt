@@ -211,3 +211,4 @@
 #| Testing |#
 (define ex (weighted-pairs integers integers +))
 (display-n-terms ex 5)
+(remainder 12 5)

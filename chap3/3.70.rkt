@@ -180,7 +180,7 @@
                 (stream-cdr (pairs t u)))
     (triples (stream-cdr s) (stream-cdr t) (stream-cdr u)))))
 
-#| Answer: |# 
+#| Answer: Part A |# 
 (define (weighted-merge s1 s2 weight)
   (cond ((stream-null? s1) s2)
         ((stream-null? s2) s1)
@@ -195,14 +195,14 @@
                   (cons-stream
                    s2car
                    (weighted-merge s1 (stream-cdr s2) weight))))))))
-                #| 
-                 (else
-                  (cons-stream
-                   s1car
-                   (weighted-merge (stream-cdr s1)
-                                   (stream-cdr s2) weight))))))))
+#| Explanation:
+The first call will return (1,1), and weighted-merge (WM) for the streams of
+[(1,2), (1,3), (1,4), (1,5), etc] and weighted-pairs (WP) of integers starting from 2.
+This second call to WP will return (2,2) and WM of streams [(2,3), (2,4), (2,5), (2,6), etc]
+and WP(integers starting from 3). The third call will return (3,3) and WM of the streams
+[(3,4), (3,5), (3,6), (3,7)] etc and the WP(integers starting from 4). This continues on.
 |#
-
+ 
 (define (sum-pair pair)
   (+ (car pair) (cadr pair)))
 
@@ -214,9 +214,24 @@
                 (stream-cdr t))
     (weighted-pairs (stream-cdr s) (stream-cdr t) weight)
     weight)))
+#| Answer: Part B |#
+(define not_2_3_5
+  (stream-filter (lambda (x)
+                (not (or (=  0 (modulo x 2)) (= 0 (modulo x 3)) (= 0 (modulo x 5)))))
+                      integers))
+
+(define (poly-ij pair)
+  (let ((i (car pair))
+        (j (cadr pair)))
+    (+ (* 2 i) (* 3 j) (* 5 i j))))
+           
+(define part-b (weighted-pairs not_2_3_5 not_2_3_5 poly-ij)) 
 
 #| Testing |#
 (define ex (weighted-pairs integers integers sum-pair))
 ;(sum-pair (list 1 4))
+;(poly-ij (list 1 4))
 ;(define ex (pairs integers integers))
-(display-n-terms ex 35)
+;(display-n-terms not_2_3_5 25)
+;(display-n-terms ex 35)
+(display-n-terms part-b 50)
