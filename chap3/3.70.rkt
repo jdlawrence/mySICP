@@ -181,33 +181,35 @@
     (triples (stream-cdr s) (stream-cdr t) (stream-cdr u)))))
 
 #| Answer: |# 
-(define (weighted-merge s1 s2 weighted)
+(define (weighted-merge s1 s2 weight)
   (cond ((stream-null? s1) s2)
         ((stream-null? s2) s1)
         (else
          (let ((s1car (stream-car s1))
                (s2car (stream-car s2)))
-           (cond ((< (weighted s1car) (weighted s2car))
+           (cond ((< (weight s1car) (weight s2car))
                   (cons-stream
                    s1car
-                   (merge (stream-cdr s1) s2)))
-                 ((> (weighted s1car) (weighted s2car))
+                   (weighted-merge (stream-cdr s1) s2 weight)))
+                 ((> (weight s1car) (weight s2car))
                   (cons-stream
                    s2car
-                   (merge s1 (stream-cdr s2))))
+                   (weighted-merge s1 (stream-cdr s2) weight)))
                  (else
                   (cons-stream
                    s1car
-                   (merge (stream-cdr s1)
-                          (stream-cdr s2)))))))))
+                   (weighted-merge (stream-cdr s1)
+                          (stream-cdr s2) weight))))))))
 
 (define (weighted-pairs s t weighted)
   (weighted-merge s t weighted))
 
-(define (stream-cadr s)
-  (stream-car (stream-cdr s)))
+(define (sum-pair pair)
+  (+ (car pair) (cadr pair)))
 
-(stream-cadr integers)
 #| Testing |#
-(define ex (weighted-pairs integers integers +))
-(display-n-terms ex 5)
+(define pairs-ex (pairs integers integers))
+(define ex (weighted-pairs pairs-ex pairs-ex sum-pair))
+;(sum-pair (list 1 4))
+;(define ex (pairs integers integers))
+(display-n-terms ex 15)
