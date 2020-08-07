@@ -191,25 +191,32 @@
                   (cons-stream
                    s1car
                    (weighted-merge (stream-cdr s1) s2 weight)))
-                 ((> (weight s1car) (weight s2car))
+                 (else
                   (cons-stream
                    s2car
-                   (weighted-merge s1 (stream-cdr s2) weight)))
+                   (weighted-merge s1 (stream-cdr s2) weight))))))))
+                #| 
                  (else
                   (cons-stream
                    s1car
                    (weighted-merge (stream-cdr s1)
-                          (stream-cdr s2) weight))))))))
-
-(define (weighted-pairs s t weighted)
-  (weighted-merge s t weighted))
+                                   (stream-cdr s2) weight))))))))
+|#
 
 (define (sum-pair pair)
   (+ (car pair) (cadr pair)))
 
+(define (weighted-pairs s t weight)
+  (cons-stream
+   (list (stream-car s) (stream-car t))
+   (weighted-merge
+    (stream-map (lambda (x) (list (stream-car s) x))
+                (stream-cdr t))
+    (weighted-pairs (stream-cdr s) (stream-cdr t) weight)
+    weight)))
+
 #| Testing |#
-(define pairs-ex (pairs integers integers))
-(define ex (weighted-pairs pairs-ex pairs-ex sum-pair))
+(define ex (weighted-pairs integers integers sum-pair))
 ;(sum-pair (list 1 4))
 ;(define ex (pairs integers integers))
-(display-n-terms ex 15)
+(display-n-terms ex 35)
