@@ -249,7 +249,7 @@
              (cons-stream 0 sense-data)))
 |#
 
-#| Louis Reasoner's definition |#
+#| Louis Reasoner's definition (wrong) |#
 #|
 (define (make-zero-crossings input-stream last-value)
   (let ((avpt (/ (+ (stream-car input-stream)
