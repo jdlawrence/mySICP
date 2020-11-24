@@ -69,6 +69,8 @@
               stream))
 
 
+
+
 (define (integrate-series input)
   (define (sub term-num s)
     (if (stream-null? s)
@@ -240,7 +242,7 @@
 
 #| Answer |#
 ;Used in testing: 
-(define sense-data (cons-stream 12 (cons-stream 22 (cons-stream -3 (cons-stream 0 (cons-stream -2 (cons-stream -87 (cons-stream 5 integers))))))))
+(define sense-data (cons-stream -12 (cons-stream 22 (cons-stream -3 (cons-stream 0 (cons-stream -2 (cons-stream -87 (cons-stream 5 integers))))))))
 
 (define zero-crossings
   (stream-map sign-change-detector
@@ -249,6 +251,16 @@
 
 #| Testing |#
 ;(sign-change-detector 1 -4)
+
+(define by3 (scale-stream integers 3))
+(define by3_1 (scale-stream integers 3.1))
+
+;(display-n-terms by3 11)
+;(display-n-terms by3_1 11)
+
+(define tester (stream-map + by3 by3_1))
+
+;(display-n-terms tester 11)
 
 ;(define zero-crossings (make-zero-crossings sense-data 0))
 (display-n-terms zero-crossings 10)
