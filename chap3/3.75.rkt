@@ -240,7 +240,7 @@
 |#
 
 ;Used in testing: 
-(define sense-data (cons-stream 12 (cons-stream 22 (cons-stream -3 (cons-stream 0 (cons-stream -2 (cons-stream -87 (cons-stream 5 integers))))))))
+(define sense-data (cons-stream -12 (cons-stream 22 (cons-stream -3 (cons-stream 0 (cons-stream -2 (cons-stream -87 (cons-stream 5 integers))))))))
 
 #|
 (define zero-crossings
@@ -268,14 +268,18 @@ to be the last average point.
 
 #| Correct Answer |#
 (define (make-zero-crossings input-stream last-value last-avpt) 
-  (let ((avpt (/ (+ (stream-car input-stream) last-value) 2))) 
-    (cons-stream (sign-change-detector avpt last-avpt) 
-                 (make-zero-crossings (stream-cdr input-stream) 
-                                      (stream-car input-stream) 
-                                      avpt)))) 
+  (let ((avpt (/ (+ (stream-car input-stream)
+                    last-value)
+                 2))) 
+    (cons-stream
+     (sign-change-detector avpt last-avpt) 
+     (make-zero-crossings
+      (stream-cdr input-stream) 
+      (stream-car input-stream) 
+      avpt)))) 
 #| Testing |#
 ;(sign-change-detector 1 -4)
 
-(define zero-crossings (make-zero-crossings sense-data 0 40))
+(define zero-crossings (make-zero-crossings sense-data 0 4))
 (display-n-terms zero-crossings 10)
 
