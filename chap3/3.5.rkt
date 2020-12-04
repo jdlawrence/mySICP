@@ -13,6 +13,14 @@
 (define (predicate cx cy r x1 x2 y1 y2)
   (inside-circle cx cy r (random-in-range x1 x2) (random-in-range y1 y2)))
 
+(define (estimate-integral P x1 x2 y1 y2 trials)
+  (let (
+        (expt (lambda () (P 0.0 0.0 1.0 x1 x2 y1 y2)))
+        (area (* (- x1 x2) (- y1 y2)))
+        )
+    (* area (monte-carlo trials expt))))
+
+  
 (define (monte-carlo trials experiment)
   (define (iter trials-remaining trials-passed)
     (cond ((= trials-remaining 0.0)
@@ -25,9 +33,11 @@
                  trials-passed))))
   (iter trials 0))
 
-#| Answer |#
+#| Testing |#
 (define (ex1) (predicate 0 0 1.0 -1.0 1.0 -1.0 1.0))
 
 #| Pi !!!! |#
-(* 4 (monte-carlo 1000000 ex1))
-  
+;(* 4 (monte-carlo 1000000 ex1))
+
+#| Answer |#
+(estimate-integral predicate 1.0 -1.0 1.0 -1.0 1000000) 
