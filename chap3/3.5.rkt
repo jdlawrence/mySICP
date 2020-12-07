@@ -34,7 +34,7 @@
   (iter trials 0))
 
 #| Testing |#
-(define (ex1) (predicate 0 0 1.0 -1.0 1.0 -1.0 1.0))
+;(define (ex1) (predicate 0 0 1.0 -1.0 1.0 -1.0 1.0))
 
 #| Pi !!!! |#
 ;(* 4 (monte-carlo 1000000 ex1))
