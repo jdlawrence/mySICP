@@ -53,6 +53,10 @@ DERIV" exp))))
 We just need to replace each of the types (quoted?, assignment?, defintion?, if?, etc) with a 'get
 to retrieve the appropriate handling type based on that type. The "car" of the "exp" (expression)
 is the type.
+
+I left out the "put" part where we install each of the procedures in a lookup table with their
+definitions.
+
 |#
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
