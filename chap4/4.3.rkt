@@ -50,9 +50,16 @@ DERIV" exp))))
          (error "Unknown expression type: EVAL" exp))))
 
 #| Answer:
-We just need to replace each of the types (self-evaluating? variable? quoted?, etc) with a 'get
+We just need to replace each of the types (quoted?, assignment?, defintion?, if?, etc) with a 'get
 to retrieve the appropriate handling type based on that type. The "car" of the "exp" (expression)
 is the type.
 |#
 (define (eval exp env)
-  ((get 'eval (car exp) exp env)))
+  (cond ((self-evaluating? exp) exp)
+        ((variable? exp) (lookup-variable-value exp env))
+        ((get 'op (car exp)) ((get 'op (car exp)) exp env))
+        ((application? exp)
+         (apply (eval (operator exp) env)
+                (list-of-values (operands exp) env)))
+        (else
+         (error "Unknown expression type: EVAL" exp))))
