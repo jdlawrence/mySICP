@@ -41,14 +41,28 @@
         (else
          (error "Unknown expression type: EVAL" exp))))
 
-#| Answer |#
+#| Answer: I believe this is close, but with no easy way to test it, I'm going to move on |#
 (define (cond-arrow? clause) (eq? (cadr clause) '=>))
 (define (cond-predicate clause) (car clause))
 (define (cond-recipient clause) (caddr clause))
 
 (define (expand-clauses clauses)
-  (let ((test (cond-predicate clauses))
-        (recipient (cond-recipient clauses)))
-    (if (cond-arrow? clauses)
-        (recipient (eval test env))
-        false)))
+  (if (null? clauses)
+      'false ; no else clause
+      (let ((first (car clauses))
+            (rest (cdr clauses)))
+        (if (cond-else-clause? first)
+            (if (null? rest)
+                (sequence->exp (cond-actions first))
+                (error "ELSE clause isn't last: COND->IF"
+                       clauses))
+            (if (cond-arrow? clauses)
+                (let ((test (eval (cond-predicate clauses) env)
+                      (recipient (cond-recipient clauses)))
+                  (if (true? test)
+                      (apply (eval (recipient test) env) list test)
+                      'false)))
+                (make-if (cond-predicate first)
+                     (sequence->exp (cond-actions first))
+                     (expand-clauses rest)))))))
+                  
