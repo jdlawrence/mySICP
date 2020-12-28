@@ -28,14 +28,26 @@
         )
     (define (make-let exp body)
       (if (null? exp)
-          (cons body '())
-          (cons
-            (cons 'let (cons (car exp) '()))
+          body
+          (list 'let (list (car exp))
           (make-let (cdr exp) body))))
     (make-let assignments body)))
 
-***** CHANGE TO LIST ******
 ;((let (x 3)) (let (y (+ x 2))) (let (z (+ x y 5))) * x z)
+
+#|
+'(let ((x 3)) (let ((y (+ x 2))) (let ((z (+ x y 5))) (* x z))))
+'(let (x 3) (let (y (+ x 2)) (let (z (+ x y 5)) (* x z))))
+
+(let
+    ((x 3))
+  (let
+      ((y (+ x 2)))
+    (let
+        ((z (+ x y 5)))
+      (* x z)
+      )))
+|#
 #| Testing |#
 
 (define (tagged-list? exp tag)
