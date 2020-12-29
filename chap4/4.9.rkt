@@ -21,4 +21,22 @@ of a for loop doesn't exist.
 It is nearly the same as a "while" loop except that a "while" loop is executed when the
 predicate is true, and an "until" loop is executed while the predicate is false. 
 
+
 |#
+
+;Do
+
+#| Installation in eval: |#
+((while? exp) (eval-do exp env))
+
+#| definition: |# 
+(define (eval-do exp env)
+  (begin
+    (eval (do-consequent exp) env)
+    (let do-iter (())
+      (if (true? (eval (do-predicate exp) env))
+          (begin
+            (eval (do-consequent exp) env)
+            (do-iter)
+            )
+          false))))
