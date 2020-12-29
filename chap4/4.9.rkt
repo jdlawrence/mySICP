@@ -2,7 +2,6 @@
 (define ns (make-base-namespace))
 
 #| Answer:
-
 "do" is a construct that forces the code to execute at least once. After the
 first execution, before each subsequent execution, it evaluates a predicate,
 and if the predicate is true, it will continue to execute the code block. If
@@ -20,8 +19,6 @@ of a for loop doesn't exist.
 "until" is a construct use for repeating an action as long as a predicate is false.
 It is nearly the same as a "while" loop except that a "while" loop is executed when the
 predicate is true, and an "until" loop is executed while the predicate is false. 
-
-
 |#
 
 ;Do
