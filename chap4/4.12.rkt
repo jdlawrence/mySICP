@@ -25,19 +25,26 @@
 ;and when we find it, we return the list of values with the desired value at the head
 ;of the list. If we don't find it, we should return an empty list.
 
+#|
 (define (search var vars vals)
   (cond ((null? vars) '())
         ((eq? var (car vars)) vals)
         (else (search var (cdr vars) (cdr vals)))))
+|#
+
+(define (search var env)
+  (let ((frame (first-frame env)))
+    (define (iter var vars vals)
+      (cond ((null? vars) '())
+            ((eq? var (car vars)) vals)
+            (else (iter var (cdr vars) (cdr vals)))))
+    (iter var (frame-variables frame) (frame-values frame))))
 
 (define (lookup-variable-value var env)
   (define (env-loop env)
     (if (eq? env the-empty-environment)
         (error "Unbound variable" var)
-        (let* (
-               (frame (first-frame env))
-               (searchResult (search var (frame-variables frame) (frame-values frame)))
-               )
+        (let ((searchResult (search var env)))
           (cond ((null? searchResult) (env-loop (enclosing-environment env)))
                 (else (car searchResult))))))
   (env-loop env))
@@ -46,20 +53,14 @@
   (define (env-loop env)
     (if (eq? env the-empty-environment)
         (error "Unbound variable: SET!" var)
-        (let* (
-               (frame (first-frame env))
-               (searchResult (search var (frame-variables frame) (frame-values frame)))
-               )
+        (let ((searchResult (search var env)))
           (cond ((null? searchResult) (env-loop (enclosing-environment env)))
                 (else (set-car! searchResult val))))))
   (env-loop env))
 
 (define (define-variable! var val env)
-  (let*
-      (
-       (frame (first-frame env))
-       (searchResult (search var (frame-variables frame) (frame-values frame)))
-       )
+  (let ((searchResult (search var env))
+        (frame (first-frame env)))
     (cond ((null? searchResult) (add-binding-to-frame! var val frame))
           (else (set-car! searchResult val)))))
 
@@ -71,8 +72,8 @@
 (lookup-variable-value 'jamil newFamily)
 (set-variable-value! 'jamil 37 myEnv)
 (lookup-variable-value 'jamil newFamily)
-;(lookup-variable-value 'jamil myEnv)
-;(define-variable! 'newBrother  40 myEnv)
+(lookup-variable-value 'jamil myEnv)
+(define-variable! 'newBrother  40 myEnv)
 (define-variable! 'newBaby -1 newFamily)
 newFamily
 
