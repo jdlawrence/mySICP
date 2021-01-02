@@ -48,7 +48,6 @@
                   (enclosing-environment currentEnv))
                  )))))
   (env-loop env))
-;(define (make-unbound var env
 
 #| Testing |#
 (define exVars '(jamil akeem kyle))
@@ -57,7 +56,6 @@
 (define myEnv (extend-environment '(jamil akeem kyle) '(36 34 32) '()))
 (define newFamily (extend-environment '(robin kendrick) '(29 0) myEnv))
 ;myEnv
-;newFamily  
 (make-unbound! 'robin newFamily)
   
 
