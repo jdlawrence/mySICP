@@ -25,13 +25,6 @@
 ;and when we find it, we return the list of values with the desired value at the head
 ;of the list. If we don't find it, we should return an empty list.
 
-#|
-(define (search var vars vals)
-  (cond ((null? vars) '())
-        ((eq? var (car vars)) vals)
-        (else (search var (cdr vars) (cdr vals)))))
-|#
-
 (define (search var env)
   (let ((frame (first-frame env)))
     (define (iter var vars vals)
