@@ -2,6 +2,7 @@
   (define y (integral (delay dy) y0 dt))
   (define dy (stream-map f y))
   y)
+
 #| Will this procedure work if internal definitions are scanned
 out as shown in this exercise?
 
