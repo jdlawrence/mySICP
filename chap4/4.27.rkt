@@ -13,6 +13,7 @@ w ; Call the w function. It returns 10 and increments count
 count ; count is now 2
 
 #|
-In a regular environment count would jump from 0 to 2, but here because we delay
-the evaluation of id function until it's called, we count sequentially.
+In a regular environment count would jump from 0 to 2, but here, even though we are
+calling id twice, ie (id (id 10), one of these calls is memoized. Therefore, we just
+count sequentially.
 |#
