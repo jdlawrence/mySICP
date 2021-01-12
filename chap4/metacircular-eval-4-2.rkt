@@ -57,120 +57,45 @@
 ;;;; the two lines at the end of the file ch4-mceval.scm
 ;;;; (setting up the global environment and starting the driver loop).
 
-
-;;**implementation-dependent loading of evaluator file
-;;Note: It is loaded first so that the section 4.1.7 definition
-;; of eval overrides the definition from 4.1.1
-;(load "ch4-mceval.scm")
-
-;;;SECTION 4.1.7
-
-;(define (eval exp env)
-;  ((analyze exp) env))
-
-(define (analyze exp)
-  (cond ((self-evaluating? exp) 
-         (analyze-self-evaluating exp))
-        ((quoted? exp) (analyze-quoted exp))
-        ((variable? exp) (analyze-variable exp))
-        ((assignment? exp) (analyze-assignment exp))
-        ((definition? exp) (analyze-definition exp))
-        ((if? exp) (analyze-if exp))
-        ((lambda? exp) (analyze-lambda exp))
-        ((begin? exp) (analyze-sequence (begin-actions exp)))
-        ((cond? exp) (analyze (cond->if exp)))
-        ((application? exp) (analyze-application exp))
+(define (eval exp env)
+  (cond ((self-evaluating? exp) exp)
+        ((variable? exp) (lookup-variable-value exp env))
+        ((quoted? exp) (text-of-quotation exp))
+        ((assignment? exp) (eval-assignment exp env))
+        ((definition? exp) (eval-definition exp env))
+        ((if? exp) (eval-if exp env))
+        ((lambda? exp)
+         (make-procedure (lambda-parameters exp)
+                         (lambda-body exp)
+                         env))
+        ((begin? exp) 
+         (eval-sequence (begin-actions exp) env))
+        ((cond? exp) (eval (cond->if exp) env))
+        ((application? exp)             ; clause from book
+         (applyj (actual-value (operator exp) env)
+                (operands exp)
+                env))
         (else
-         (error "Unknown expression type -- ANALYZE" exp))))
+         (error "Unknown expression type -- EVAL" exp))))
 
-(define (analyze-self-evaluating exp)
-  (lambda (env) exp))
+(define (actual-value exp env)
+  (force-it (eval exp env)))
 
-(define (analyze-quoted exp)
-  (let ((qval (text-of-quotation exp)))
-    (lambda (env) qval)))
-
-(define (analyze-variable exp)
-  (lambda (env) (lookup-variable-value exp env)))
-
-(define (analyze-assignment exp)
-  (let ((var (assignment-variable exp))
-        (vproc (analyze (assignment-value exp))))
-    (lambda (env)
-      (set-variable-value! var (vproc env) env)
-      'ok)))
-
-(define (analyze-definition exp)
-  (let ((var (definition-variable exp))
-        (vproc (analyze (definition-value exp))))
-    (lambda (env)
-      (define-variable! var (vproc env) env)
-      'ok)))
-
-(define (analyze-if exp)
-  (let ((pproc (analyze (if-predicate exp)))
-        (cproc (analyze (if-consequent exp)))
-        (aproc (analyze (if-alternative exp))))
-    (lambda (env)
-      (if (true? (pproc env))
-          (cproc env)
-          (aproc env)))))
-
-(define (analyze-lambda exp)
-  (let ((vars (lambda-parameters exp))
-        (bproc (analyze-sequence (lambda-body exp))))
-    (lambda (env) (make-procedure vars bproc env))))
-
-(define (analyze-sequence exps)
-  (define (sequentially proc1 proc2)
-    (lambda (env) (proc1 env) (proc2 env)))
-  (define (loop first-proc rest-procs)
-    (if (null? rest-procs)
-        first-proc
-        (loop (sequentially first-proc (car rest-procs))
-              (cdr rest-procs))))
-  (let ((procs (map analyze exps)))
-    (if (null? procs)
-        (error "Empty sequence -- ANALYZE"))
-    (loop (car procs) (cdr procs))))
-
-(define (analyze-application exp)
-  (let ((fproc (analyze (operator exp)))
-        (aprocs (map analyze (operands exp))))
-    (lambda (env)
-      (execute-application (fproc env)
-                           (map (lambda (aproc) (aproc env))
-                                aprocs)))))
-
-(define (execute-application proc args)
-  (cond ((primitive-procedure? proc)
-         (apply-primitive-procedure proc args))
-        ((compound-procedure? proc)
-         ((procedure-body proc)
-          (extend-environment (procedure-parameters proc)
-                              args
-                              (procedure-environment proc))))
-        (else
-         (error
-          "Unknown procedure type -- EXECUTE-APPLICATION"
-          proc))))
-
-'ANALYZING-METACIRCULAR-EVALUATOR-LOADED
-
-(define (applyj procedure arguments)
+(define (applyj procedure arguments env)
   (cond ((primitive-procedure? procedure)
-         (apply-primitive-procedure procedure arguments))
+         (apply-primitive-procedure
+          procedure
+          (list-of-arg-values arguments env))) ; changed
         ((compound-procedure? procedure)
          (eval-sequence
           (procedure-body procedure)
           (extend-environment
            (procedure-parameters procedure)
-           arguments
+           (list-of-delayed-args arguments env) ; changed
            (procedure-environment procedure))))
         (else
          (error
           "Unknown procedure type -- APPLY" procedure))))
-
 
 (define (list-of-values exps env)
   (if (no-operands? exps)
@@ -178,10 +103,48 @@
       (cons (eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
 
+(define (list-of-arg-values exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (actual-value (first-operand exps) env)
+            (list-of-arg-values (rest-operands exps)
+                                env))))
+
+(define (list-of-delayed-args exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (delay-it (first-operand exps) env)
+            (list-of-delayed-args (rest-operands exps)
+                                  env))))
+
 (define (eval-if exp env)
-  (if (true? (eval (if-predicate exp) env))
+  (if (true? (actual-value (if-predicate exp) env))
       (eval (if-consequent exp) env)
       (eval (if-alternative exp) env)))
+
+;; non-memoizing version of force-it
+
+(define (force-it obj)
+  (if (thunk? obj)
+      (actual-value (thunk-exp obj) (thunk-env obj))
+      obj))
+
+;; thunks
+
+(define (delay-it exp env)
+  (list 'thunk exp env))
+
+(define (thunk? obj)
+  (tagged-list? obj 'thunk))
+
+(define (thunk-exp thunk) (cadr thunk))
+(define (thunk-env thunk) (caddr thunk))
+
+;; "thunk" that has been forced and is storing its (memoized) value
+(define (evaluated-thunk? obj)
+  (tagged-list? obj 'evaluated-thunk))
+
+(define (thunk-value evaluated-thunk) (cadr evaluated-thunk))
 
 (define (eval-sequence exps env)
   (cond ((last-exp? exps) (eval (first-exp exps) env))
@@ -226,7 +189,6 @@
 
 (define (assignment-value exp) (caddr exp))
 
-
 (define (definition? exp)
   (tagged-list? exp 'define))
 
@@ -248,7 +210,6 @@
 
 (define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))
-
 
 (define (if? exp) (tagged-list? exp 'if))
 
@@ -288,7 +249,6 @@
 (define (no-operands? ops) (null? ops))
 (define (first-operand ops) (car ops))
 (define (rest-operands ops) (cdr ops))
-
 
 (define (cond? exp) (tagged-list? exp 'cond))
 
@@ -459,14 +419,14 @@
    (primitive-implementation proc) args))
 
 
-
-(define input-prompt ";;; M-Eval input:")
-(define output-prompt ";;; M-Eval value:")
+(define input-prompt ";;; L-Eval input:")
+(define output-prompt ";;; L-Eval value:")
 
 (define (driver-loop)
   (prompt-for-input input-prompt)
   (let ((input (read)))
-    (let ((output (eval input the-global-environment)))
+    (let ((output
+           (actual-value input the-global-environment)))
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
