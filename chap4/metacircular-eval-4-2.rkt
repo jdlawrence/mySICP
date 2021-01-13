@@ -72,9 +72,15 @@
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)             ; clause from book
-         (applyj (actual-value (operator exp) env)
+         #|
+         (applyj
+                (actual-value (operator exp) env)
                 (operands exp)
                 env))
+|#
+         (applyj (eval (operator exp) env)
+                 (operands exp)
+                 env))
         (else
          (error "Unknown expression type -- EVAL" exp))))
 
@@ -123,11 +129,29 @@
       (eval (if-alternative exp) env)))
 
 ;; non-memoizing version of force-it
-
+;#|
 (define (force-it obj)
   (if (thunk? obj)
       (actual-value (thunk-exp obj) (thunk-env obj))
       obj))
+;|#
+
+;; memoizing version of force-it
+
+#|
+(define (force-it obj)
+  (cond ((thunk? obj)
+         (let ((result (actual-value
+                        (thunk-exp obj)
+                        (thunk-env obj))))
+           (set-car! obj 'evaluated-thunk)
+           (set-car! (cdr obj) result)  ; replace exp with its value
+           (set-cdr! (cdr obj) '())     ; forget unneeded env
+           result))
+        ((evaluated-thunk? obj)
+         (thunk-value obj))
+        (else obj)))
+|#
 
 ;; thunks
 
