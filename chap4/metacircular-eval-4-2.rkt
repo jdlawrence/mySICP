@@ -165,19 +165,19 @@
 
 (define (thunk-value evaluated-thunk) (cadr evaluated-thunk))
 
-#|
+;#|
 (define (eval-sequence exps env)
   (cond ((last-exp? exps) (eval (first-exp exps) env))
         (else (eval (first-exp exps) env)
               (eval-sequence (rest-exps exps) env))))
-|#
+;|#
 
-;#|
+#|
 (define (eval-sequence exps env)
   (cond ((last-exp? exps) (eval (first-exp exps) env))
         (else (actual-value (first-exp exps) env)
               (eval-sequence (rest-exps exps) env))))
-;|#
+|#
 
 
 (define (eval-assignment exp env)
@@ -475,9 +475,53 @@
                      '<procedure-env>))
       (display object)))
 
+
 ;;;Following are commented out so as not to be evaluated when
 ;;; the file is loaded.
 (define the-global-environment (setup-environment))
+;$$$ Put definitions here to have them defined before we start the driver-loop
+(eval '(define a (+ 2 2)) the-global-environment)
+(eval '(define (cons x y) (lambda (m) (m x y))) the-global-environment)
+(eval '(define (car z) (z (lambda (p q) p))) the-global-environment)
+(eval '(define (cdr z) (z (lambda (p q) q))) the-global-environment)
+
+(eval '(define (list-ref items n)
+         (if (= n 0)
+             (car items)
+             (list-ref (cdr items) (- n 1)))) the-global-environment)
+
+(eval '(define (map proc items)
+         (if (null? items)
+             '()
+             (cons (proc (car items)) (map proc (cdr items))))) the-global-environment)
+
+(eval '(define (scale-list items factor)
+         (map (lambda (x) (* x factor)) items)) the-global-environment)
+
+(eval '(define (add-lists list1 list2)
+         (cond ((null? list1) list2)
+               ((null? list2) list1)
+               (else (cons (+ (car list1) (car list2))
+                           (add-lists (cdr list1) (cdr list2)))))) the-global-environment)
+
+(eval '(define ones (cons 1 ones)) the-global-environment)
+
+(eval '(define integers (cons 1 (add-lists ones integers))) the-global-environment)
+
+(eval '(define (integral integrand initial-value dt)
+         (define int
+           (cons initial-value
+                 (add-lists (scale-list integrand dt) int)))
+         int) the-global-environment)
+
+(eval '(define (solve f y0 dt)
+         (define y (integral dy y0 dt))
+         (define dy (map f y))
+         y) the-global-environment)
+
 (driver-loop)
 
+
+
 'METACIRCULAR-EVALUATOR-LOADED
+
