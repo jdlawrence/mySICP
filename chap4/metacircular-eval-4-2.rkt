@@ -60,7 +60,7 @@
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
-        ((quoted? exp) (text-of-quotation exp))
+        ((quoted? exp) (text-of-quotation exp env))
         ((assignment? exp) (eval-assignment exp env))
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
@@ -203,7 +203,18 @@
 (define (quoted? exp)
   (tagged-list? exp 'quote))
 
-(define (text-of-quotation exp) (cadr exp))
+(define (text-of-quotation exp env)
+  (let ((text (cadr exp)))
+    (if (pair? text)
+        (eval (make-lazy-list text) env)
+        text)))
+
+(define (make-lazy-list text)
+  (if (null? text)
+      '()
+      (list 'cons
+            (list 'quote (car text))
+            (make-lazy-list (cdr text)))))
 
 (define (tagged-list? exp tag)
   (if (pair? exp)
@@ -509,15 +520,15 @@
 (eval '(define integers (cons 1 (add-lists ones integers))) the-global-environment)
 
 (eval '(define (integral integrand initial-value dt)
-         (define int
-           (cons initial-value
-                 (add-lists (scale-list integrand dt) int)))
-         int) the-global-environment)
+(define int
+(cons initial-value
+(add-lists (scale-list integrand dt) int)))
+int) the-global-environment)
 
 (eval '(define (solve f y0 dt)
-         (define y (integral dy y0 dt))
-         (define dy (map f y))
-         y) the-global-environment)
+(define y (integral dy y0 dt))
+(define dy (map f y))
+y) the-global-environment)
 
 (driver-loop)
 
