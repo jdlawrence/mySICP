@@ -23,23 +23,29 @@ cooper cannot be on floor 1, we can cut that list down to:
 
 
 (define (multiple-dwelling)
-  (let ((baker (amb 1 2 3 4))
+  (let ((miller (amb 3 4 5))
+        (cooper (amb 2 3 4)))
+    
+    (require (> miller cooper))
+    (let ((fletcher (amb 2 3 4)))
+      (require (not (= (abs (- fletcher cooper)) 1)))
+      (let ((smith (amb 1 2 3 4 5)))
+        (require (not (= (abs (- fletcher cooper)) 1)))
+        (require (distinct? (list baker cooper fletcher miller smith)))
+        #|
+(baker (amb 1 2 3 4))
         (cooper (amb 2 3 4))
         (fletcher (amb 2 3 4))
         (miller (amb 3 4 5))
-        (smith (amb 1 2 3 4 5)))
-    (require
-      (distinct? (list baker cooper fletcher miller smith)))
-    #|
+        (smith (amb 1 2 3 4 5))        
     (require (not (= baker 5)))
     (require (not (= cooper 1)))
     (require (not (= fletcher 5)))
     (require (not (= fletcher 1)))
     (require (> miller cooper))
     |# ; Removed because they are isolated conditions that can adjust for in the list for each person
-    (require (not (= (abs (- smith fletcher)) 1)))
-    (require (not (= (abs (- fletcher cooper)) 1)))
-    (list (list 'baker baker) (list 'cooper cooper)
-          (list 'fletcher fletcher) (list 'miller miller)
-          (list 'smith smith))))
+        (list (list 'baker baker) (list 'cooper cooper)
+              (list 'fletcher fletcher) (list 'miller miller)
+              (list 'smith smith))))))
 
+    
