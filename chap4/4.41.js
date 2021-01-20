@@ -72,8 +72,32 @@ const permutations2 = (theSet) => {
       finalResult.push(used);
     }
   };
+
   iteration(theSet, []);
   return finalResult;
 };
 
-console.log('ayyyy', permutations2(aSet));
+const mSets = [['a', 'b', 'c'], ['d', 'e', 'f'], ['x', 'y', 'z']];
+
+const permutations3 = (theSets) => {
+  const finalResult = [];
+
+  const iteration = (available, used) => {
+    if (available.length) {
+      for (let i = 0; i < available.length; i++) {
+        for (let j = 0; j < available[i].length; j++) {
+          const choice = available[i][j];
+          const newAvailable = removeAtIndex(available, i);
+          iteration(newAvailable, [...used, choice]);
+        }
+      }
+    } else {
+      finalResult.push(used);
+    }
+  };
+  iteration(theSets, []);
+  return finalResult;
+};
+
+// console.log('ayyyy', permutations2(aSet));
+console.log('3', permutations3(mSets).slice(-1));
