@@ -29,7 +29,7 @@
          (make-procedure (lambda-parameters exp)
                          (lambda-body exp)
                          env))
-        ((begin? exp) 
+        ((begin? exp)
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)
@@ -68,7 +68,7 @@
          (make-procedure (lambda-parameters exp)
                          (lambda-body exp)
                          env))
-        ((begin? exp) 
+        ((begin? exp)
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)             ; clause from book
@@ -436,7 +436,7 @@
         (list '- -)
         (list '> >)
         (list '>= >=)
-        (list '<= <=)        
+        (list '<= <=)
         (list 'pair? pair?)
         (list 'not not)
         (list 'newline newline)
@@ -520,15 +520,17 @@
 (eval '(define integers (cons 1 (add-lists ones integers))) the-global-environment)
 
 (eval '(define (integral integrand initial-value dt)
-(define int
-(cons initial-value
-(add-lists (scale-list integrand dt) int)))
-int) the-global-environment)
+         (define int
+           (cons initial-value
+                 (add-lists (scale-list integrand dt) int)))
+         int) the-global-environment)
 
 (eval '(define (solve f y0 dt)
-(define y (integral dy y0 dt))
-(define dy (map f y))
-y) the-global-environment)
+         (define y (integral dy y0 dt))
+         (define dy (map f y))
+         y) the-global-environment)
+
+(eval '(define (square x) (* x x)) the-global-environment)
 
 (driver-loop)
 
