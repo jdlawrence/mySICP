@@ -1,214 +1,130 @@
-#lang sicp
+#lang racket
+(define (distinct? items)
+  (cond ((null? items) true)
+        ((null? (cdr items)) true)
+        ((member (car items) (cdr items)) false)
+        (else (distinct? (cdr items)))))
 
-(define (display-line x) (newline) (display x))
-(define (stream-car stream)
-  (car stream))
+#|
 
-(define the-empty-stream '())
+(define (flatmap proc li) 
+  (if (null? li) 
+      '() 
+      (let ((result (proc (car li))) 
+            (rest (flatmap proc (cdr li)))) 
+        (if (pair? result) 
+            (append result rest) 
+            (cons result rest))))) 
+  
+(define (permutations lists) 
+  (if (null? lists) 
+      '(()) 
+      (flatmap (lambda (x)  
+                 (map (lambda (y) (cons x y))  
+                      (permutations (cdr lists)))) 
+               (car lists)))) 
+  
+(define (restrictions l) 
+  (apply 
+   (lambda (baker cooper fletcher miller smith) 
+     (and (> miller cooper) 
+          (not (= (abs (- smith fletcher)) 1)) 
+          (not (= (abs (- fletcher cooper)) 1)) 
+          (distinct? (list baker cooper fletcher miller smith)))) 
+   l))
 
-(define (stream-cdr stream)
-  (force (cdr stream)))
+#|
+(define (filter aList pred)
+  (if (null? aList)
+      '()
+      (if (pred (car aList))
+          (cons (car aList) (filter (cdr aList) pred))
+          (filter (cdr aList) pred))))
 
-(define (stream-null? stream)
-  (null? stream))
+(filter '(1 2 3 4 5) (lambda (x) (= (modulo x 2) 0)))
+|#
 
-(define (stream-ref s n)
-  (if (= n 0)
-      (stream-car s)
-      (stream-ref (stream-cdr s) (- n 1))))
+  
+(define (multiple-dwelling) 
+  (let ((baker '(1 2 3 4)) 
+        (cooper '(2 3 4 5)) 
+        (fletcher '(2 3 4)) 
+        (miller '(3 4 5)) 
+        (smith '(1 2 3 4 5))) 
+;    (filter restrictions (permutations (list baker cooper fletcher miller smith)))))
+    (permutations (list baker cooper fletcher miller smith))))
 
-(define (stream-map proc . argstreams)
-  (if (stream-null? (car argstreams))
-      the-empty-stream
-      (cons-stream
-       (apply proc (map stream-car argstreams))
-       (apply stream-map
-              (cons proc (map stream-cdr argstreams))))))
+(multiple-dwelling)
+|#
 
-(define (stream-for-each proc s)
-  (if (stream-null? s)
-      'done
-      (begin (proc (stream-car s))
-             (stream-for-each proc (stream-cdr s)))))
+(define (flatmap proc li) 
+  (if (null? li) 
+      '() 
+      (let ((result (proc (car li))) 
+            (rest (flatmap proc (cdr li)))) 
+        (if (pair? result) 
+            (append result rest) 
+            (cons result rest)))))
 
-(define (stream-enumerate-interval low high)
-  (if (> low high)
-      the-empty-stream
-      (cons-stream
-       low
-       (stream-enumerate-interval (+ low 1) high))))
+;(flatmap (lambda (x) (* x 2))
+;        (list 1 '(2 3)))
+  
+(define (permutations lists) 
+  (if (null? lists) 
+      '(()) 
+      (flatmap (lambda (x)  
+                 (map (lambda (y) (cons x y))  
+                      (permutations (cdr lists)))) 
+               (car lists)))) 
+#|
+Permutations:
+- Takes in all of the lists, ie (list '(1 2 3) '(a b c) '(x y z)), etc
+- Takes the first list, ie '(1 2 3)
+- Flatmap procedure is a lambda that takes in an x, and combines the x in a cons with every permutation of all the other lists
+- The lambda 'x' is the first value in the first list, ie 1
+- The permutations of the rests of the list end up
 
-(define (show x)
-  (display-line x)
-  x)
+|#
+(define (restrictions l) 
+  (apply 
+   (lambda (baker cooper fletcher miller smith) 
+     (and (> miller cooper) 
+          ;(not (= (abs (- smith fletcher)) 1)) 
+          ;(not (= (abs (- fletcher cooper)) 1)) 
+          (distinct? (list baker cooper fletcher miller smith)))) 
+   l)) 
+  
+(define (multiple-dwelling) 
+  (let ((baker '(1 2 3 4)) 
+        (cooper '(2 3 4 5)) 
+        (fletcher '(2 3 4)) 
+        (miller '(3 4 5)) 
+        (smith '(1 2 3 4 5))) 
+    (filter restrictions (permutations (list baker cooper fletcher miller smith)))))
 
-(define (display-stream s)
-  (stream-for-each display-line s))
+;(permutations (list '(a b) '(c d)))
+;(permutations (list '(j d) '(l)))
+;(permutations (list '(j)))
+;(multiple-dwelling)
+;(not (= 5 2))
+;(not (= 5 5))
 
-(define (stream-filter pred stream)
-  (cond ((stream-null? stream) the-empty-stream)
-        ((pred (stream-car stream))
-         (cons-stream (stream-car stream)
-                      (stream-filter
-                       pred
-                       (stream-cdr stream))))
-        (else (stream-filter pred (stream-cdr stream)))))
+(define (inc x) (+ x 1))
 
-(define ones (cons-stream 1 ones))
+(define (safe? solution)
+  (let ((firstVal (car solution)))
+    (define (conflict val1 val2 i)
+      (if  (or
+              (= val1 val2)
+              (= val1 (+ val2 i))
+              (= val1 (- val2 i)))
+           true
+           false))
+    (define (iter remaining index)
+      (cond ((null? remaining) true)
+            ((conflict firstVal (car remaining) index) false)
+            (else (iter (cdr remaining) (+ 1 index)))))
+    (iter (cdr solution) 1)))
 
-(define (add-streams s1 s2) (stream-map + s1 s2))
-
-(define integers
-  (cons-stream 1 (add-streams ones integers)))
-
-(define (mul-streams s1 s2)
-  (stream-map * s1 s2))
-
-(define (scale-stream stream factor)
-  (stream-map (lambda (x) (* x factor))
-              stream))
-
-
-(define (integrate-series input)
-  (define (sub term-num s)
-    (if (stream-null? s)
-        the-empty-stream
-        (cons-stream
-         (* (/ 1 term-num) (stream-car s))
-         (sub (+ term-num 1) (stream-cdr s)))))
-  (sub 1 input))
-
-(define cosine-series (cons-stream 1 (integrate-series (scale-stream sine-series -1))))
-(define sine-series (cons-stream 0 (integrate-series cosine-series)))
-
-(define (mul-series s1 s2)
-  (cons-stream (* (stream-car s1) (stream-car s2))
-               (add-streams (scale-stream (stream-cdr s1) (stream-car s2))
-                            (mul-series s1 (stream-cdr s2)))))
-
-(define (invert-unit-series s)
-  (cons-stream 1 (scale-stream (mul-series (stream-cdr s) (invert-unit-series s)) -1)))
-
-(define (div-series s1 s2)
-  (if (= (stream-car s2) 0)
-      (error "cannot divide by zero")
-      (mul-series s1 (invert-unit-series s2))))
-
-(define (average x y)
-  (/ (+ x y) 2))
-
-(define (partial-sums s) 
-  (add-streams s (cons-stream 0 (partial-sums s))))
-
-#| Square root iterative function |#
-(define (sqrt-improve guess x)
-  (average guess (/ x guess)))
-
-(define (sqrt-stream x)
-  (define guesses
-    (cons-stream
-     1.0
-     (stream-map (lambda (guess) (sqrt-improve guess x))
-                 guesses)))
-  guesses)
-
-(define (display-n-terms s n)
-  (define (sub count)
-    (if (= count n)
-        (stream-ref s count)
-        (begin
-          (display (stream-ref s count))
-          (display "\n")
-          (sub (+ count 1)))))
-  (sub 0))
-
-(define (square x) (* x x))
-
-(define (euler-transform s)
-  (let ((s0 (stream-ref s 0)) ; Sn-1
-        (s1 (stream-ref s 1)) ; Sn
-        (s2 (stream-ref s 2))) ; Sn+1
-    (cons-stream (- s2 (/ (square (- s2 s1))
-                          (+ s0 (* -2 s1) s2)))
-                 (euler-transform (stream-cdr s)))))
-
-(define (make-tableau transform s)
-  (cons-stream s (make-tableau transform (transform s))))
-
-(define (accelerated-sequence transform s)
-  (stream-map stream-car (make-tableau transform s)))
-
-
-(define (interleave s1 s2)
-  (if (stream-null? s1)
-      s2
-      (cons-stream (stream-car s1)
-                   (interleave s2 (stream-cdr s1)))))
-(define (pairs s t)
-  (cons-stream
-   (list (stream-car s) (stream-car t))
-   (interleave
-    (stream-map (lambda (x) (list (stream-car s) x))
-                (stream-cdr t))
-    (pairs (stream-cdr s) (stream-cdr t)))))
-
-(define (merge s1 s2)
-  (cond ((stream-null? s1) s2)
-        ((stream-null? s2) s1)
-        (else
-         (let ((s1car (stream-car s1))
-               (s2car (stream-car s2)))
-           (cond ((< s1car s2car)
-                  (cons-stream
-                   s1car
-                   (merge (stream-cdr s1) s2)))
-                 ((> s1car s2car)
-                  (cons-stream
-                   s2car
-                   (merge s1 (stream-cdr s2))))
-                 (else
-                  (cons-stream
-                   s1car
-                   (merge (stream-cdr s1)
-                          (stream-cdr s2)))))))))
-
-(define (triples s t u)
-  (cons-stream
-   (list (stream-car s) (stream-car t) (stream-car u))
-   (interleave
-    (stream-map (lambda (pair) (list (stream-car s) (car pair) (cadr pair)))
-                (stream-cdr (pairs t u)))
-    (triples (stream-cdr s) (stream-cdr t) (stream-cdr u)))))
-
-#| Answer: |# 
-(define (weighted-merge s1 s2 weighted)
-  (cond ((stream-null? s1) s2)
-        ((stream-null? s2) s1)
-        (else
-         (let ((s1car (stream-car s1))
-               (s2car (stream-car s2)))
-           (cond ((< (weighted s1car) (weighted s2car))
-                  (cons-stream
-                   s1car
-                   (merge (stream-cdr s1) s2)))
-                 ((> (weighted s1car) (weighted s2car))
-                  (cons-stream
-                   s2car
-                   (merge s1 (stream-cdr s2))))
-                 (else
-                  (cons-stream
-                   s1car
-                   (merge (stream-cdr s1)
-                          (stream-cdr s2)))))))))
-
-(define (weighted-pairs s t weighted)
-  (weighted-merge s t weighted))
-
-(define (stream-cadr s)
-  (stream-car (stream-cdr s)))
-
-(stream-cadr integers)
-#| Testing |#
-(define ex (weighted-pairs integers integers +))
-(display-n-terms ex 5)
-(remainder 12 5)
+(safe? '(1 2 3 4))
+;(cons 5 '( 2 8 6))
