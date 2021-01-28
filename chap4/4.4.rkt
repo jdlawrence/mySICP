@@ -3,7 +3,7 @@
 
 #| Answer |#
 (define (eval-and exps env)
-  (cond ((last-exp? exps) (eval (first-exp exps) env))
+cond ((last-exp? exps) (eval (first-exp exps) env))
         ((true? (first-exp? exps)) (eval-and (cdr exps) env))
         (else false)
          ))
