@@ -76,7 +76,7 @@
        (safe-diag k positions)))
 
 (define empty-board (list))
-#|
+
 (define (queens board-size)
   (define (queen-cols k)
     (if (= k 0)
@@ -91,7 +91,8 @@
                  (enumerate-interval 1 board-size)))
           (queen-cols (- k 1))))))
   (queen-cols board-size))
-|#
+
+#|
 (define (queens board-size)
   (define (queen-cols k)
     (if (= k 0)
@@ -104,6 +105,7 @@
                 (enumerate-interval 1 board-size)))
          (queen-cols (- k 1)))))
   (queen-cols board-size))
+|#
 
 (define (queens2 board-size)
   (define (queen-cols k)
@@ -120,10 +122,11 @@
           (enumerate-interval 1 board-size)
           )))
   (queen-cols board-size))
-(queens 2)
-;(queens2 2)
+(length (queens 4))
+(queens 4)
+;(queens2 4)
 ;(length (queens 5))
 ;(length (queens 6))
 ;(length (queens 7))
-;(length (queens 8))
+(length (queens 8))
 
