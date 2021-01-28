@@ -141,6 +141,9 @@
       (cadddr exp)
       'false))
 
+(define (or? exp) (tagged-list? exp 'or))
+(define (and? exp) (tagged-list? exp 'and))
+
 (define (make-if predicate consequent alternative)
   (list 'if predicate consequent alternative))
 
@@ -310,12 +313,16 @@
         (list 'memq memq)
         (list 'member member)
         (list 'not not)
+        ;(list 'or or)
+        ;(list 'and and) 
         (list '+ +)
         (list '- -)
         (list '* *)
         (list '= =)
         (list '> >)
+        (list '< <)
         (list '>= >=)
+        (list '<= <=)
         (list 'abs abs)
         (list 'remainder remainder)
         (list 'integer? integer?)
@@ -418,6 +425,8 @@
         ((assignment? exp) (analyze-assignment exp))
         ((definition? exp) (analyze-definition exp))
         ((if? exp) (analyze-if exp))
+        ((or? exp) (analyze-or exp))
+        ((and? exp) (analyze-and exp))
         ((lambda? exp) (analyze-lambda exp))
         ((begin? exp) (analyze-sequence (begin-actions exp)))
         ((cond? exp) (analyze (cond->if exp)))
@@ -489,6 +498,40 @@
         (error "Empty sequence -- ANALYZE"))
     (loop (car procs) (cdr procs))))
 
+;Needed for or
+(define (or-actions exp) (cdr exp))
+
+(define (expand-or-clauses actions)
+  (if (null? actions)
+      (make-if 'false 'true 'false)
+      (let ((first (car actions))
+            (rest (cdr actions)))
+        (make-if first 'true (expand-or-clauses rest)))))
+
+(define (or->if exp)
+  (expand-or-clauses (or-actions exp)))
+
+(define (analyze-or exp)
+  (analyze-if (or->if exp)))
+
+;Needed for and
+(define (and-actions exp)
+  (cdr exp))
+
+(define (expand-and-clauses actions)
+  (if (null? actions)
+      (make-if 'true 'true 'false)
+      (let ((first (car actions))
+            (rest (cdr actions)))
+        (make-if first (expand-and-clauses rest) 'false))))
+
+(define (and->if exp)
+  (expand-and-clauses (and-actions exp)))
+
+(define (analyze-and exp)
+  (analyze-if (and->if exp)))
+
+  
 ;;;Definitions and assignments
 
 (define (analyze-definition exp)
@@ -784,6 +827,65 @@
  (lambda (value fail) value)
  (lambda () 'failed))
 
+(ambeval
+ '(define (an-integer-between low high)  
+    (require (<= low high))  
+    (amb low (an-integer-between (+ low 1) high))) 
+ the-global-environment
+ (lambda (value fail) value)
+ (lambda () 'failed))
+ 
+(ambeval
+ '(define (queens n) 
+    (define (iter solution n-left) 
+      (if (= n-left 0) 
+          (begin 
+            ;(display solution) 
+            ;(newline))
+            solution)
+          (begin 
+            (let ((x-solution (cons (an-integer-between 1 n) solution))) 
+              (require (safe? x-solution)) 
+              (iter x-solution (- n-left 1)))))) 
+    (iter '() n)) 
+ the-global-environment
+ (lambda (value fail) value)
+ (lambda () 'failed))
+
+(ambeval
+ '(define (inc x)
+    (+ x 1))
+ the-global-environment
+ (lambda (value fail) value)
+ (lambda () 'failed))
+
+(ambeval
+ '(define (safe? solution)  
+    (let ((p (car solution))) 
+      (define (conflict? q i) 
+        (or 
+         (= p q) 
+         (= p (+ q i)) 
+         (= p (- q i)))) 
+      (define (check rest i) 
+        (cond  
+          ((null? rest) true) 
+          ((conflict? (car rest) i) false) 
+          (else (check (cdr rest) (inc i))))) 
+      (check (cdr solution) 1))) 
+ the-global-environment
+ (lambda (value fail) value)
+ (lambda () 'failed))
+
+
+
+(ambeval
+ '(define (an-element-of items)
+    (require (not (null? items)))
+    (amb (car items) (an-element-of (cdr items))))
+ the-global-environment
+ (lambda (value fail) value)
+ (lambda () 'failed))
 
 
 (driver-loop)
