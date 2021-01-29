@@ -675,8 +675,6 @@
     (make-combination (make-lambda (map let-var bindings)
                                    (let-body exp))
                       (map let-val bindings))))
-                     
-
 
 ;; A longer list of primitives -- suitable for running everything in 4.3
 ;; Overrides the list in ch4-mceval.scm
@@ -685,22 +683,13 @@
 ;;  eq? for ex. solution
 (define the-global-environment (setup-environment))
 
-(eval '(define jamil 'jamil) the-global-environment)
 
 (eval '(define (distinct? items)
          (cond ((null? items) true)
                ((null? (cdr items)) true)
                ((member (car items) (cdr items)) false)
                (else (distinct? (cdr items))))) the-global-environment)
-#|
-(ambeval '(define (square x) (* x x)) the-global-environment
-         (lambda ()
-           (announce-output output-prompt))
-         ;; ambeval failure
-         (lambda ()
-           (announce-output
-            ";;; There are no more values of")))
-|#
+
 (ambeval '(define (square x) (* x x))
          the-global-environment
          (lambda (value fail) value)
@@ -744,30 +733,6 @@
  the-global-environment
  (lambda (value fail) value)
  (lambda () 'failed))
-
-#|
-(ambeval
- '(define (yachts)
-    (let ((downing (amb 'gabrielle 'lorna 'maryann 'melissa 'rosalind))
-          (hall (amb 'gabrielle 'lorna 'maryann 'melissa 'rosalind))
-          (hood (amb 'gabrielle 'lorna 'maryann 'melissa 'rosalind))
-          (moore (amb 'gabrielle 'lorna 'maryann 'melissa 'rosalind))
-          (parker (amb 'gabrielle 'lorna 'maryann 'melissa 'rosalind)))
-      (require
-        (distinct? (list downing hall hood moore parker)))
-      (require (= hood 'gabrielle))
-      (require (= moore 'lorna))
-      (require (= hall 'rosalind))
-      (list
-       (list 'downing downing)
-       (list 'hall hall)
-       (list 'hood hood)
-       (list 'moore moore)
-       (list 'parker parker))))
- the-global-environment
- (lambda (value fail) value)
- (lambda () 'failed))
-|#
 
 ;gabrielle 1
 ;lorna 2
@@ -886,6 +851,114 @@
  the-global-environment
  (lambda (value fail) value)
  (lambda () 'failed))
+
+
+;;;SECTION 4.3.2 -- Parsing natural language
+
+;;; In this section, sample calls to parse are commented out with ;:
+;;; and the output of parses is quoted with '
+;;; Thus you can load this whole section into the amb evaluator --
+;;;  (but beware of the exercise 4.47 code, and of redefinitions
+;;;   of a procedure -- e.g. parse-noun-phrase)
+
+(ambeval '(define nouns '(noun jamil food student professor cat class))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define verbs '(verb studies lectures eats sleeps))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define articles '(article the a))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+;; output of parse
+'(sentence (noun-phrase (article the) (noun cat))
+           (verb eats))
+
+(ambeval '(define (parse-sentence)
+            (list 'sentence
+                  (parse-noun-phrase)
+                  (parse-verb-phrase)))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define (parse-word word-list)
+            (require (not (null? *unparsed*)))
+            (require (memq (car *unparsed*) (cdr word-list)))
+            (let ((found-word (car *unparsed*)))
+              (set! *unparsed* (cdr *unparsed*))
+              (list (car word-list) found-word)))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define *unparsed* '())
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define (parse input)
+            (set! *unparsed* input)
+            (let ((sent (parse-sentence)))
+              (require (null? *unparsed*))
+              sent))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+
+;: (parse '(the cat eats))
+;; output of parse
+'(sentence (noun-phrase (article the) (noun cat)) (verb eats))
+
+(ambeval '(define prepositions '(prep for to in by with))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define (parse-prepositional-phrase)
+            (list 'prep-phrase
+                  (parse-word prepositions)
+                  (parse-noun-phrase)))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define (parse-verb-phrase)
+            (define (maybe-extend verb-phrase)
+              (amb verb-phrase
+                   (maybe-extend (list 'verb-phrase
+                                       verb-phrase
+                                       (parse-prepositional-phrase)))))
+            (maybe-extend (parse-word verbs)))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define (parse-simple-noun-phrase)
+            (list 'simple-noun-phrase
+                  (parse-word articles)
+                  (parse-word nouns)))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define (parse-noun-phrase)
+            (define (maybe-extend noun-phrase)
+              (amb noun-phrase
+                   (maybe-extend (list 'noun-phrase
+                                       noun-phrase
+                                       (parse-prepositional-phrase)))))
+            (maybe-extend (parse-simple-noun-phrase)))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
 
 
 (driver-loop)
