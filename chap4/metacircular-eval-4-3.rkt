@@ -852,6 +852,16 @@
  (lambda (value fail) value)
  (lambda () 'failed))
 
+;;; Custom function from https://eli.thegreenplace.net/2008/01/05/sicp-section-432
+(ambeval
+ '(define (list-amb lst)
+    (if (null? lst)
+        (amb)
+        (amb (car lst) (list-amb (cdr lst)))))
+ the-global-environment
+ (lambda (value fail) value)
+ (lambda () 'failed))
+
 
 ;;;SECTION 4.3.2 -- Parsing natural language
 
@@ -893,7 +903,8 @@
             (require (memq (car *unparsed*) (cdr word-list)))
             (let ((found-word (car *unparsed*)))
               (set! *unparsed* (cdr *unparsed*))
-              (list (car word-list) found-word)))
+;              (list (car word-list) found-word)))
+              (list-amb (cdr word-list))))
          the-global-environment
          (lambda (value fail) value)
          (lambda () 'failed))
@@ -908,6 +919,17 @@
             (let ((sent (parse-sentence)))
               (require (null? *unparsed*))
               sent))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define (generate)
+            (let (
+                  (article (an-element-of (cdr articles)))
+                  (noun (an-element-of (cdr nouns)))
+                  )
+              (list article noun)))
+;            (list (amb 'a 'the) (amb 'butter 'coat 'sludge)))
          the-global-environment
          (lambda (value fail) value)
          (lambda () 'failed))
