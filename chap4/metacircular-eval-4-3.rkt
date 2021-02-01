@@ -555,9 +555,10 @@
                  (set-variable-value! var val env)
                  (succeed 'ok
                           (lambda ()    ; *2*
-                            (set-variable-value! var
-                                                 old-value
-                                                 env)
+                           ; (set-variable-value! var
+                           ;                      old-value
+                           ;                      env)
+                            ((lambda () '()))
                             (fail2)))))
              fail))))
 
@@ -903,8 +904,8 @@
             (require (memq (car *unparsed*) (cdr word-list)))
             (let ((found-word (car *unparsed*)))
               (set! *unparsed* (cdr *unparsed*))
-;              (list (car word-list) found-word)))
-;              (list-amb (cdr word-list))))
+              ;              (list (car word-list) found-word)))
+              ;              (list-amb (cdr word-list))))
               (an-element-of (cdr word-list))))
          the-global-environment
          (lambda (value fail) value)
@@ -930,7 +931,7 @@
                   (noun (an-element-of (cdr nouns)))
                   )
               (list article noun)))
-;            (list (amb 'a 'the) (amb 'butter 'coat 'sludge)))
+         ;            (list (amb 'a 'the) (amb 'butter 'coat 'sludge)))
          the-global-environment
          (lambda (value fail) value)
          (lambda () 'failed))
@@ -979,6 +980,18 @@
                                        noun-phrase
                                        (parse-prepositional-phrase)))))
             (maybe-extend (parse-simple-noun-phrase)))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+(ambeval '(define (counter)
+            (define count 0)
+            (let ((x (an-element-of '(a b c)))
+                  (y (an-element-of '(a b c))))
+              (set! count (+ count 1))
+              ;(permanent-set! count (+ count 1))
+              (require (not (eq? x y)))
+              (list x y count)))
          the-global-environment
          (lambda (value fail) value)
          (lambda () 'failed))
