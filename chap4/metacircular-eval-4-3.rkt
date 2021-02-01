@@ -904,7 +904,8 @@
             (let ((found-word (car *unparsed*)))
               (set! *unparsed* (cdr *unparsed*))
 ;              (list (car word-list) found-word)))
-              (list-amb (cdr word-list))))
+;              (list-amb (cdr word-list))))
+              (an-element-of (cdr word-list))))
          the-global-environment
          (lambda (value fail) value)
          (lambda () 'failed))
