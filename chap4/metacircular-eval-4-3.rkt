@@ -275,6 +275,7 @@
                 (frame-values frame)))))
   (env-loop env))
 
+
 (define (define-variable! var val env)
   (let ((frame (first-frame env)))
     (define (scan vars vals)
@@ -328,6 +329,7 @@
         (list 'integer? integer?)
         (list 'sqrt sqrt)
         (list 'eq? eq?)
+        (list 'modulo modulo)
         ;;      more primitives
         ))
 
@@ -425,6 +427,7 @@
         ((assignment? exp) (analyze-assignment exp))
         ((definition? exp) (analyze-definition exp))
         ((if? exp) (analyze-if exp))
+        ((if-fail? exp) (analyze-if-fail exp))
         ((or? exp) (analyze-or exp))
         ((and? exp) (analyze-and exp))
         ((lambda? exp) (analyze-lambda exp))
@@ -675,6 +678,26 @@
     (make-combination (make-lambda (map let-var bindings)
                                    (let-body exp))
                       (map let-val bindings))))
+
+;;; For exercise 4.52
+(define (if-fail? expr) (tagged-list? expr 'if-fail)) 
+
+(define (if-fail-success exp) (cadr exp))
+(define (if-fail-failure exp) (caddr exp))
+
+(define (analyze-if-fail exp)
+  (let (
+        (cproc (analyze (if-fail-success exp)))
+        (fproc (analyze (if-fail-failure exp)))
+        )
+    (lambda (env succeed fail)
+      (cproc env
+             (lambda (value fail2)
+               (succeed value fail2))
+             (lambda ()
+               (fproc env succeed fail))))))
+
+(if-fail? analyze-if-fail)
 
 ;; A longer list of primitives -- suitable for running everything in 4.3
 ;; Overrides the list in ch4-mceval.scm
@@ -994,6 +1017,23 @@
          the-global-environment
          (lambda (value fail) value)
          (lambda () 'failed))
+
+(ambeval
+ '(define (even? x) (= (modulo x 2) 0))
+ the-global-environment
+ (lambda (value fail) value)
+ (lambda () 'failed))
+
+(ambeval '(define (if-fail successExp failureExp)
+            (let ((result (ambeval successExp)))
+              (if (not-null? result)
+                  result
+                  failureExp)))
+         the-global-environment
+         (lambda (value fail) value)
+         (lambda () 'failed))
+
+        
 
 
 (driver-loop)
