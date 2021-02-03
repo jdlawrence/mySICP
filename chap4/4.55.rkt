@@ -5,12 +5,9 @@
 (supervisor ?x (Ben Bitdiddle))
 
 2. the names and jobs of all people in the accounting division;
-(?x ?y (accounting ?z))
+(job ?y (accounting . ?z))
 
 3. the names and addresses of all people who live in Slumerville.
-(?x ?y (Slumerville ?z ?w))
+(address ?y (Slumerville . ?z))
 
 |#
-(if (not (true? pred-value)) 
-    (fail) 
-    (succeed 'ok fail2)) 
