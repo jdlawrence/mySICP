@@ -1029,54 +1029,55 @@
                (lisp-value < ?salary1 ?salary2)
                (replace ?person1 ?person2)))
 
-    (rule (big-shot ?person)
+    (rule (big-shot ?person ?division)
           (and
            (job ?person (?division . ?rest))
-           (supervisor ?person ?boss)
-           (job ?boss (?boss-division . ?boss-rest))
-           (not (same ?division ?boss-division))))
-    ))
+           (or (not (supervisor ?person ?boss))
+               (and  (supervisor ?person ?boss)
+                     (job ?boss (?boss-division . ?boss-rest))
+                     (not (same ?division ?boss-division))))))
+           ))
 
-(define input-prompt ";;; Query input:")
-(define output-prompt ";;; Query results:")
+    (define input-prompt ";;; Query input:")
+    (define output-prompt ";;; Query results:")
 
-(define (prompt-for-input string)
-  (newline) (newline) (display string) (newline))
+    (define (prompt-for-input string)
+      (newline) (newline) (display string) (newline))
 
-(define (query-driver-loop)
-  (prompt-for-input input-prompt)
-  (let ((q (query-syntax-process (read))))
-    (cond ((assertion-to-be-added? q)
-           (add-rule-or-assertion! (add-assertion-body q))
-           (newline)
-           (display "Assertion added to data base.")
-           (query-driver-loop))
-          (else
-           (newline)
-           (display output-prompt)
-           ;; [extra newline at end] (announce-output output-prompt)
-           (display-stream
-            (stream-map
-             (lambda (frame)
-               (instantiate q
-                 frame
-                 (lambda (v f)
-                   (contract-question-mark v))))
-             (qeval q (singleton-stream '()))))
-           (query-driver-loop)))))
+    (define (query-driver-loop)
+      (prompt-for-input input-prompt)
+      (let ((q (query-syntax-process (read))))
+        (cond ((assertion-to-be-added? q)
+               (add-rule-or-assertion! (add-assertion-body q))
+               (newline)
+               (display "Assertion added to data base.")
+               (query-driver-loop))
+              (else
+               (newline)
+               (display output-prompt)
+               ;; [extra newline at end] (announce-output output-prompt)
+               (display-stream
+                (stream-map
+                 (lambda (frame)
+                   (instantiate q
+                     frame
+                     (lambda (v f)
+                       (contract-question-mark v))))
+                 (qeval q (singleton-stream '()))))
+               (query-driver-loop)))))
 
-(define (instantiate exp frame unbound-var-handler)
-  (define (copy exp)
-    (cond ((var? exp)
-           (let ((binding (binding-in-frame exp frame)))
-             (if binding
-                 (copy (binding-value binding))
-                 (unbound-var-handler exp frame))))
-          ((pair? exp)
-           (cons (copy (car exp)) (copy (cdr exp))))
-          (else exp)))
-  (copy exp))
+    (define (instantiate exp frame unbound-var-handler)
+      (define (copy exp)
+        (cond ((var? exp)
+               (let ((binding (binding-in-frame exp frame)))
+                 (if binding
+                     (copy (binding-value binding))
+                     (unbound-var-handler exp frame))))
+              ((pair? exp)
+               (cons (copy (car exp)) (copy (cdr exp))))
+              (else exp)))
+      (copy exp))
 
-(initialize-data-base microshaft-data-base)
+    (initialize-data-base microshaft-data-base)
 
-(query-driver-loop)
+    (query-driver-loop)
