@@ -1029,18 +1029,12 @@
                (lisp-value < ?salary1 ?salary2)
                (replace ?person1 ?person2)))
 
-    #|
-    (rule (replace-higher-paid ?person1 ?person2)
+    (rule (big-shot ?person)
           (and
-           (and (salary ?person1 ?salary1)
-                (salary ?person2 ?salary2)
-                (lisp-value < ?salary1 ?salary2)
-                (replace ?person1 ?person2))
-           (salary ?person1 ?salary1)
-           (salary ?person2 ?salary2)))
-|#
-    
-    ;|#
+           (job ?person (?division . ?rest))
+           (supervisor ?person ?boss)
+           (job ?boss (?boss-division . ?boss-rest))
+           (not (same ?division ?boss-division))))
     ))
 
 (define input-prompt ";;; Query input:")
