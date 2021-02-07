@@ -1036,48 +1036,62 @@
                (and  (supervisor ?person ?boss)
                      (job ?boss (?boss-division . ?boss-rest))
                      (not (same ?division ?boss-division))))))
-           ))
 
-    (define input-prompt ";;; Query input:")
-    (define output-prompt ";;; Query results:")
+    (meeting accounting (Monday 9am))
+    (meeting administration (Monday 10am))
+    (meeting computer (Wednesday 3pm))
+    (meeting administration (Friday 1pm))
+    (meeting whole-company (Wednesday 4pm))
 
-    (define (prompt-for-input string)
-      (newline) (newline) (display string) (newline))
+    (rule (meeting-time ?person ?day-and-time)
+          (or (meeting whole-company ?day-and-time)
+              (and (job ?person (?division . ?rest))
+                   (meeting ?division ?day-and-time))))
+    
+    ))
 
-    (define (query-driver-loop)
-      (prompt-for-input input-prompt)
-      (let ((q (query-syntax-process (read))))
-        (cond ((assertion-to-be-added? q)
-               (add-rule-or-assertion! (add-assertion-body q))
-               (newline)
-               (display "Assertion added to data base.")
-               (query-driver-loop))
-              (else
-               (newline)
-               (display output-prompt)
-               ;; [extra newline at end] (announce-output output-prompt)
-               (display-stream
-                (stream-map
-                 (lambda (frame)
-                   (instantiate q
-                     frame
-                     (lambda (v f)
-                       (contract-question-mark v))))
-                 (qeval q (singleton-stream '()))))
-               (query-driver-loop)))))
 
-    (define (instantiate exp frame unbound-var-handler)
-      (define (copy exp)
-        (cond ((var? exp)
-               (let ((binding (binding-in-frame exp frame)))
-                 (if binding
-                     (copy (binding-value binding))
-                     (unbound-var-handler exp frame))))
-              ((pair? exp)
-               (cons (copy (car exp)) (copy (cdr exp))))
-              (else exp)))
-      (copy exp))
 
-    (initialize-data-base microshaft-data-base)
+(define input-prompt ";;; Query input:")
+(define output-prompt ";;; Query results:")
 
-    (query-driver-loop)
+(define (prompt-for-input string)
+  (newline) (newline) (display string) (newline))
+
+(define (query-driver-loop)
+  (prompt-for-input input-prompt)
+  (let ((q (query-syntax-process (read))))
+    (cond ((assertion-to-be-added? q)
+           (add-rule-or-assertion! (add-assertion-body q))
+           (newline)
+           (display "Assertion added to data base.")
+           (query-driver-loop))
+          (else
+           (newline)
+           (display output-prompt)
+           ;; [extra newline at end] (announce-output output-prompt)
+           (display-stream
+            (stream-map
+             (lambda (frame)
+               (instantiate q
+                 frame
+                 (lambda (v f)
+                   (contract-question-mark v))))
+             (qeval q (singleton-stream '()))))
+           (query-driver-loop)))))
+
+(define (instantiate exp frame unbound-var-handler)
+  (define (copy exp)
+    (cond ((var? exp)
+           (let ((binding (binding-in-frame exp frame)))
+             (if binding
+                 (copy (binding-value binding))
+                 (unbound-var-handler exp frame))))
+          ((pair? exp)
+           (cons (copy (car exp)) (copy (cdr exp))))
+          (else exp)))
+  (copy exp))
+
+(initialize-data-base microshaft-data-base)
+
+(query-driver-loop)
