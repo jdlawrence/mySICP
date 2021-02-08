@@ -301,6 +301,7 @@
 
 (define (primitive-implementation proc) (cadr proc))
 
+; Primitives
 (define primitive-procedures
   (list (list 'car car)
         (list 'cdr cdr)
@@ -319,10 +320,14 @@
         (list '>= >=)
         (list '<= <=)
         (list 'abs abs)
+        (list 'map map)
         (list 'remainder remainder)
         (list 'integer? integer?)
         (list 'sqrt sqrt)
         (list 'eq? eq?)
+        (list 'string-append string-append)
+        (list 'symbol->string symbol->string)
+        (list 'string<? string<?)
         (list 'modulo modulo)
         ))
 
@@ -930,6 +935,15 @@
 ;; Do following to reinit the data base from microshaft-data-base
 ;;  in Scheme (not in the query driver loop)
 
+#|
+(define (person->string person) 
+  (if (null? person) 
+      "" 
+      (string-append (symbol->string (car person)) (person->string (cdr person))))) 
+(define (person>? p1 p2) 
+  (string>? (person->string p1) (person->string p2))) 
+
+|#
 
 (define microshaft-data-base
   '(
@@ -991,7 +1005,9 @@
     (rule (lives-near ?person-1 ?person-2)
           (and (address ?person-1 (?town . ?rest-1))
                (address ?person-2 (?town . ?rest-2))
-               (not (same ?person-1 ?person-2))))
+               (not (same ?person-1 ?person-2))
+               ;               (not (lives-near ?person-2 ?any-person))
+               ))  
 
     (rule (same ?x ?x))
 
@@ -1047,7 +1063,50 @@
           (or (meeting whole-company ?day-and-time)
               (and (job ?person (?division . ?rest))
                    (meeting ?division ?day-and-time))))
-    
+
+    #|
+    (rule (before ?x ?y)
+          (lisp-value (lambda (p1 p2)
+                        (define (accumulate op initial sequence)
+                          (if (null? sequence)
+                              initial
+                              (op (car sequence)
+                                  (accumulate op initial (cdr sequence)))))
+                        (define (list->string symbol)
+                          (accumulate
+                           string-append
+                           ""
+                           (map symbol->string symbol)))
+                        (string<? (list->string p1) (list->string p2)))
+                      ?x ?y))
+
+    (rule (lives-near-2 ?person1 ?person2) 
+          (and (address ?person1 (?town . ?rest-1)) 
+               (address ?person2 (?town . ?rest-2))
+               ;(not (same ?person-1 ?person-2))
+               (before ?person1 ?person2)))
+|#
+    ;(assert!
+     (rule (before ?x ?y) 
+                   (lisp-value 
+                    (lambda (s1 s2) 
+                      (define (list->string s) 
+                        (fold-right 
+                         string-append 
+                         "" 
+                         (map symbol->string s))) 
+                      (string<? (list->string s1) (list->string s2))) 
+                    ?x 
+                    ?y))
+     ;) 
+  
+   ; (assert!
+     (rule (lives-near-2 ?person-1 ?person-2) 
+                   (and (address ?person-1 (?town . ?rest-1)) 
+                        (address ?person-2 (?town . ?rest-2)) 
+                        (before ?person-1 ?person-2)))
+   ;  )
+ 
     ))
 
 
