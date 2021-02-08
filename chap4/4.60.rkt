@@ -31,9 +31,10 @@ ie '("jamil" "d" "lawrence") -> "jamildlawrence"
            (not (same ?person-1 ?person-2)))
       )
 
-
-; NOTE: this doesn't work in the current evaluator because it doesn't recognize
-; "string-append", "map", and "foldr".
+#|
+NOTE: this doesn't work in the current evaluator because it doesn't recognize
+"string-append", "map", and "foldr".
+|#
 (rule (lives-near-2 ?person1 ?person2) 
       (and (address ?person1 (?town . ?rest-1)) 
            (address ?person2 (?town . ?rest-2))
