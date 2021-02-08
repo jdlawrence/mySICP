@@ -1087,26 +1087,33 @@
                (before ?person1 ?person2)))
 |#
     ;(assert!
-     (rule (before ?x ?y) 
-                   (lisp-value 
-                    (lambda (s1 s2) 
-                      (define (list->string s) 
-                        (fold-right 
-                         string-append 
-                         "" 
-                         (map symbol->string s))) 
-                      (string<? (list->string s1) (list->string s2))) 
-                    ?x 
-                    ?y))
-     ;) 
+    (rule (before ?x ?y) 
+          (lisp-value 
+           (lambda (s1 s2) 
+             (define (list->string s) 
+               (fold-right 
+                string-append 
+                "" 
+                (map symbol->string s))) 
+             (string<? (list->string s1) (list->string s2))) 
+           ?x 
+           ?y))
+    ;) 
   
-   ; (assert!
-     (rule (lives-near-2 ?person-1 ?person-2) 
-                   (and (address ?person-1 (?town . ?rest-1)) 
-                        (address ?person-2 (?town . ?rest-2)) 
-                        (before ?person-1 ?person-2)))
-   ;  )
- 
+    ; (assert!
+    (rule (lives-near-2 ?person-1 ?person-2) 
+          (and (address ?person-1 (?town . ?rest-1)) 
+               (address ?person-2 (?town . ?rest-2)) 
+               (before ?person-1 ?person-2)))
+    ;  )
+
+    (rule (append-to-form () ?y ?y))
+    (rule (append-to-form (?u . ?v) ?y (?u . ?z))
+          (append-to-form ?v ?y ?z))
+
+    (rule (?x next-to ?y in (?x ?y . ?u)))
+    (rule (?x next-to ?y in (?v . ?z))
+          (?x next-to ?y in ?z))
     ))
 
 
