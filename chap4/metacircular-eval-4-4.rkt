@@ -1002,11 +1002,20 @@
     (can-do-job (administration secretary)
                 (administration big wheel))
 
+    (son Adam Cain)
+    (son Cain Enoch)
+    (son Enoch Irad)
+    (son Irad Mehujael)
+    (son Mehujael Methushael)
+    (son Methushael Lamech)
+    (wife Lamech Ada)
+    (son Ada Jabal)
+    (son Ada Jubal)
+
     (rule (lives-near ?person-1 ?person-2)
           (and (address ?person-1 (?town . ?rest-1))
                (address ?person-2 (?town . ?rest-2))
                (not (same ?person-1 ?person-2))
-               ;               (not (lives-near ?person-2 ?any-person))
                ))  
 
     (rule (same ?x ?x))
@@ -1064,29 +1073,6 @@
               (and (job ?person (?division . ?rest))
                    (meeting ?division ?day-and-time))))
 
-    #|
-    (rule (before ?x ?y)
-          (lisp-value (lambda (p1 p2)
-                        (define (accumulate op initial sequence)
-                          (if (null? sequence)
-                              initial
-                              (op (car sequence)
-                                  (accumulate op initial (cdr sequence)))))
-                        (define (list->string symbol)
-                          (accumulate
-                           string-append
-                           ""
-                           (map symbol->string symbol)))
-                        (string<? (list->string p1) (list->string p2)))
-                      ?x ?y))
-
-    (rule (lives-near-2 ?person1 ?person2) 
-          (and (address ?person1 (?town . ?rest-1)) 
-               (address ?person2 (?town . ?rest-2))
-               ;(not (same ?person-1 ?person-2))
-               (before ?person1 ?person2)))
-|#
-    ;(assert!
     (rule (before ?x ?y) 
           (lisp-value 
            (lambda (s1 s2) 
@@ -1098,14 +1084,11 @@
              (string<? (list->string s1) (list->string s2))) 
            ?x 
            ?y))
-    ;) 
   
-    ; (assert!
     (rule (lives-near-2 ?person-1 ?person-2) 
           (and (address ?person-1 (?town . ?rest-1)) 
                (address ?person-2 (?town . ?rest-2)) 
                (before ?person-1 ?person-2)))
-    ;  )
 
     (rule (append-to-form () ?y ?y))
     (rule (append-to-form (?u . ?v) ?y (?u . ?z))
@@ -1117,13 +1100,19 @@
 
     (rule (last-pair (?x) (?x)))
 
-    ;(rule (last-pair (?x ?y ?z)
-    ;                 (?z)))
 
     (rule (last-pair (?anything . ?last) (?x))
-                     (last-pair ?last (?x)))
+          (last-pair ?last (?x)))
+    
+    (rule (grandson ?gf ?gs)
+          (and (son ?gf ?father)
+               (son ?father ?gs)))
 
-;    (rule (last-pair (?w ?x . 
+    ;(rule (son ?f ?s))
+    
+    (rule (son ?f ?s)
+          (and (wife ?f ?wife)
+               (son ?wife ?s)))
      
     ))
 
