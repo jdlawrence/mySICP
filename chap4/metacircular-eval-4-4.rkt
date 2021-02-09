@@ -1114,6 +1114,17 @@
     (rule (?x next-to ?y in (?x ?y . ?u)))
     (rule (?x next-to ?y in (?v . ?z))
           (?x next-to ?y in ?z))
+
+    (rule (last-pair (?x) (?x)))
+
+    ;(rule (last-pair (?x ?y ?z)
+    ;                 (?z)))
+
+    (rule (last-pair (?anything . ?last) (?x))
+                     (last-pair ?last (?x)))
+
+;    (rule (last-pair (?w ?x . 
+     
     ))
 
 
