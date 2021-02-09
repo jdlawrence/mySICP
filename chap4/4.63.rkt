@@ -6,7 +6,7 @@ son of G, then S is the grandson of G” and “If W is the wife
 of M, and S is the son of W , then S is the son of M” (which
 was supposedly more true in biblical times than today) that
 will enable the query system to find the grandson of Cain;
-the sons of Lamech; the grandsons of Methushael. (See Exercise 4.69 for some rules to deduce more complicated relationships.)
+the sons of Lamech; the grandsons of Methushael.
 |#
 
 (son Adam Cain)
