@@ -1113,6 +1113,10 @@
     (rule (son ?f ?s)
           (and (wife ?f ?wife)
                (son ?wife ?s)))
+
+    (rule (reverse () ())
+    (rule (reverse (?first . ?rest) ?rev)
+          (append-to-form (reverse ?rest ?rev2) (?first) ?result))
      
     ))
 
