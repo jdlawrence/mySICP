@@ -1099,8 +1099,6 @@
           (?x next-to ?y in ?z))
 
     (rule (last-pair (?x) (?x)))
-
-
     (rule (last-pair (?anything . ?last) (?x))
           (last-pair ?last (?x)))
     
@@ -1114,10 +1112,11 @@
           (and (wife ?f ?wife)
                (son ?wife ?s)))
 
-    (rule (reverse () ())
-    (rule (reverse (?first . ?rest) ?rev)
-          (append-to-form (reverse ?rest ?rev2) (?first) ?result))
-     
+    (rule (reverse () ()))
+    (rule (reverse ?x ?y)
+          (and (append-to-form (?first) ?rest ?x)
+               (append-to-form ?rev-rest (?first) ?y)
+               (reverse ?rest ?rev-rest)))
     ))
 
 

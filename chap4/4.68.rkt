@@ -5,17 +5,21 @@
       aList
       (append (reverse (cdr aList)) (list (car aList)))))
 
-#| Answer:
-The basic operation would be to store a list of all the queries, and if a query has been conducted with
-certain arguments already, then we assume there's a loop.
+; The reverse of an empty list is an empty list
+(reverse () ())
 
-I'll leave the details of this alone for now.
+; If you can:
+; - Append the car (first) to the cdr (rest) and it's equal to ?x
+; - Append the reverse of the cdr (rev-rest) to first and it's equal to ?y
+; - You can recursively call reverse with the cdr and the reverse of the cdr
+(rule (reverse ?x ?y) 
+      (and (append-to-form (?first) ?rest ?x) 
+           (append-to-form ?rev-rest (?first) ?y) 
+           (reverse ?rest ?rev-rest)))
+      
 
-|#
+; Demonstrating the three rules
+(append-to-form (1) (2 3) (1 2 3))
+(append-to-form (3 2) (1) (3 2 1))
+(reverse (2 3) (3 2))
 
-(rule (reverse (?orig) (?rev)))
-(rule (reverse (?first . ?rest) ?rev)
-      (append-to-form (reverse ?rest ?rev2) (?first)))
-      
-      
-      
