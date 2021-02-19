@@ -16,6 +16,10 @@
       (and (append-to-form (?first) ?rest ?x) 
            (append-to-form ?rev-rest (?first) ?y) 
            (reverse ?rest ?rev-rest)))
+
+#| NOTE: This works with (reverse? ?x (1 2 3)) but (reverse (1 2 3) ?x) causes
+an infinite loop. |#
+
       
 
 ; Demonstrating the three rules
